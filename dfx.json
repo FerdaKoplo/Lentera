@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "Lentera_backend": {
+      "main": "src/Lentera_backend/main.mo",
+      "type": "motoko"
+    },
+    "Lentera_frontend": {
+      "dependencies": [
+        "Lentera_backend"
+      ],
+      "source": [
+        "src/Lentera_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "Lentera_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
