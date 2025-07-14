@@ -51,14 +51,14 @@ const AuthPage = () => {
   return (
     <div className="min-h-screen bg-[#FAFFFD] relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-100 h-100 opacity-30">
+        <div className="absolute -top-32 -right-32 w-90 h-90 opacity-30">
           <img
             src="/assets/flower.svg"
             alt="Decorative flower"
             className="w-full h-full object-contain"
           />
         </div>
-        <div className="absolute bottom-0 left-0 w-100 h-100 opacity-30">
+        <div className="absolute bottom-0 left-0 w-[350px] h-[350px] opacity-30">
           <img
             src="/assets/flower.svg"
             alt="Decorative flower"
@@ -70,7 +70,7 @@ const AuthPage = () => {
         <div className="text-center w-full">
           {!isAuthenticated ? (
             <>
-              <h1 className="text-4xl md:text-7xl font-montserrat font-bold text-teal-400 mb-4">
+              <h1 className="text-4xl md:text-7xl font-montserrat  bg-gradient-to-t from-[#9ee0c991] to-[#65C3A6] font-bold  mb-4 bg-clip-text text-transparent">
                 Welcome To Lentera
               </h1>
               <p className="text-gray-600 text-lg mb-8 font-montserrat font-normal">
