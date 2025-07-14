@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+   .mint-violet {
+    @apply bg-gradient-to-r from-[#BCA7E8] to-[#A8E6CF] bg-clip-text text-transparent;
+  }
+}
