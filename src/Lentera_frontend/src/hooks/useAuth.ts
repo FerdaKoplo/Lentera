@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { AuthClient } from "@dfinity/auth-client";
 import { Actor } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 import { Lentera_backend } from "../../../declarations/Lentera_backend";
+import type {
+  _SERVICE,
+  User,
+} from "../../../declarations/Lentera_backend/Lentera_backend.did";
 
 const useAuth = () => {
-  const [authClient, setAuthClient] = useState(null);
+  const [authClient, setAuthClient] = useState<AuthClient | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [principalId, setPrincipalId] = useState("");
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<String | null>(null);
 
   const initializeAuthClient = useCallback(async () => {
     const client = await AuthClient.create();
@@ -44,12 +48,12 @@ const useAuth = () => {
     setUser(null);
   }, [authClient]);
 
-  const fetchUserData = useCallback(async (pid) => {
+  const fetchUserData = useCallback(async (pid: string) => {
     setIsLoading(true);
     setError(null);
     try {
       const principal = Principal.fromText(pid);
-      const res = await Fundasi_backend.getUserByPrincipal(principal);
+      const res = await Lentera_backend.getUserByPrincipal(principal);
       if ("ok" in res) {
         const userData = res.ok;
         setUser(userData);
@@ -57,7 +61,7 @@ const useAuth = () => {
       } else {
         console.error("User not found, registering new user..." + res.err);
         const tempUsername = "Anonymous_" + Date.now();
-        const created = await Fundasi_backend.registerUser(tempUsername);
+        const created = await Lentera_backend.registerUser(tempUsername);
         if ("ok" in created) {
           const newUser = created.ok;
           setUser(newUser);
@@ -81,7 +85,7 @@ const useAuth = () => {
       setAuthClient(client);
       if (isAuth) {
         const identity = client.getIdentity();
-        Actor.agentOf(Fundasi_backend)?.replaceIdentity?.(identity);
+        Actor.agentOf(Lentera_backend)?.replaceIdentity?.(identity);
         const principal = identity.getPrincipal().toText();
         setPrincipalId(principal);
         setIsAuthenticated(true);

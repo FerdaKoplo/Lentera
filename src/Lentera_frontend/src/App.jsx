@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import AuthPage from "./pages/user/auth/AuthPage";
+import { AuthProvider, useAuth } from "./context/auth-context";
 
-function App() {
+function AppRoutes() {
   const { isAuthenticated, isLoading, user } = useAuth();
-
   if (isLoading) return <p>Loading...</p>;
   return (
     <Routes>
@@ -19,6 +19,16 @@ function App() {
         }
       />
     </Routes>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
