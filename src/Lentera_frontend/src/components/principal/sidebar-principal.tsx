@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
+
+// interface SideBarPrincipalProps {
+//     activePage : string,
+//     onPageChange : (page : 'Profile' | 'Journals' | 'Analytics' | 'Community' |  'Articles' ) => void
+// }
 
 const SideBarPrincipal = () => {
+    
+    
     return (
         <nav className='fixed bg-brand-light top-0 left-0 h-screen w-60 bg-'>
             <div className='flex flex-col items-center gap-16 justify-center py-14'>

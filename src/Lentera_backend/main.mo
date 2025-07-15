@@ -89,13 +89,7 @@ actor {
         return CommunityService.getCommunityDetail(communityMap, communityId);
     };
 
-    public shared(_) func joinCommunity(communityId : Nat, userId : Principal, username : Text, avatar : ?Text, hasProfile : Bool) : async Text {
-        let user : User.User = {
-            id = userId;
-            username = username;
-            avatar = avatar;
-            hasProfile = hasProfile;
-        };
+    public shared(_) func joinCommunity(communityId : Nat, userId : Principal) : async Text {
 
         let result = CommunityService.joinCommunity(communityMap, communityId, userId);
 

@@ -12,7 +12,6 @@ const CreateArticle = () => {
     const [activeEditor, setActiveEditor] = useState<'title' | 'content' | null>(null)
     const { articles, article, loading, error, createArticle } = useArticle()
 
-
     const titleEditor = useEditor({
         extensions: [
             StarterKit,

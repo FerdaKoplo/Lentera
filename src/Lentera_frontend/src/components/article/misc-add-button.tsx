@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { RxCross1 } from "react-icons/rx";
 import { FaPlus } from "react-icons/fa6";
 
-type ToolButtonProps = {
+interface ToolButtonProps {
   editor: Editor | null
 }
 
