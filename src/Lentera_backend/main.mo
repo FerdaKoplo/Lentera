@@ -4,6 +4,7 @@ import Principal "mo:base/Principal";
 import HashMap "mo:base/HashMap";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
+import Array "mo:base/Array";
 
 actor {
   stable var stableUser : [User.User] = [];
@@ -41,5 +42,26 @@ actor {
   };
   public query func getUserByUsername(username : Text) : async ?User.User {
     return UserService.getUserByUsername(userMap, username);
+  };
+
+  public shared(msg) func updateUserProfile(username: Text, avatarUrl: ?Text) : async Result.Result<User.User, Text> {
+    let caller = msg.caller;
+    switch (userMap.get(caller)) {
+      case null return #err("User not found");
+      case (?user) {
+        let updated: User.User = {
+          id = user.id;
+          username = username;
+          avatarUrl = avatarUrl;
+          hasProfile = true; 
+        };
+        userMap.put(caller, updated);
+
+        stableUser := Array.filter<User.User>(stableUser, func(u) { u.id != caller });
+        stableUser := Array.append(stableUser, [updated]);
+
+        return #ok(updated);
+      };
+    };
   };
 };

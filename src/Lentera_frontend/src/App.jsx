@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import AuthPage from "./pages/user/auth/AuthPage";
 import { AuthProvider, useAuth } from "./context/auth-context";
+import EditProfile from "./pages/user/profile/EditProfile";
 
 function AppRoutes() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -16,6 +17,12 @@ function AppRoutes() {
           ) : (
             <AuthPage />
           )
+        }
+      />
+      <Route
+        path="/edit-profile"
+        element={
+          isAuthenticated ? <EditProfile /> : <Navigate to="/login" replace />
         }
       />
     </Routes>

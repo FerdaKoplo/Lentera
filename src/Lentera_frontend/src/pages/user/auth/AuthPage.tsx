@@ -22,15 +22,15 @@ const AuthPage = () => {
       const needsProfile = !user.hasProfile;
       console.log("Redirecting based on hasProfile:", needsProfile);
       hasRedirectedRef.current = true;
-      navigate(needsProfile ? "/edit-profile" : "/campaigns", {
+      navigate(needsProfile ? "/edit-profile" : "/homepage", {
         replace: true,
       });
     }
   }, [isAuthenticated, isLoading, user, navigate]);
 
-  useEffect(() => {
-    console.log("DEBUG: ", { isAuthenticated, isLoading, user });
-  }, [isAuthenticated, isLoading, user]);
+  // useEffect(() => {
+  //   console.log("DEBUG: ", { isAuthenticated, isLoading, user });
+  // }, [isAuthenticated, isLoading, user]);
 
   if (isLoading) {
     return (
