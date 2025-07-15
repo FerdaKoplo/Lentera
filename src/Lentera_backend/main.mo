@@ -5,17 +5,34 @@ import Result "mo:base/Result";
 import Nat "mo:base/Nat";
 import Hash "mo:base/Hash";
 import ArticleService "services/ArticleService";
+import Community "types/Community";
+import CommunityService "services/CommunityService";
+import User "types/User";
+import Discussion "types/Discussion";
+import DiscussionService "services/DiscussionService";
+import DiscussionReply "types/DiscussionReply";
+import DiscussionReplyService "services/DiscussionReplyService";
 actor {
     stable var stableArticles : [Article.Article] = [] : [Article.Article];
     let articlesMap = HashMap.HashMap<Nat, Article.Article>(0, Nat.equal, Hash.hash);
     var articleCounter : Nat = 0;
 
+    stable var stableCommunites : [Community.Community] = [] : [Community.Community];
+    let communityMap = HashMap.HashMap<Nat, Community.Community>(0, Nat.equal, Hash.hash);
+    var communityCounter : Nat = 0;
 
+    stable var stableDiscussions : [Discussion.Discussion] = [] : [Discussion.Discussion];
+    let discussionMap = HashMap.HashMap<Nat, Discussion.Discussion>(0, Nat.equal, Hash.hash);
+    var discussionCounter : Nat = 0;
+
+    stable var stableDiscussionReplies : [DiscussionReply.DiscussionReply] = [] : [DiscussionReply.DiscussionReply];
+    let discussionReplyMap = HashMap.HashMap<Nat, DiscussionReply.DiscussionReply>(0, Nat.equal, Hash.hash);
+    var discussionReplyCounter : Nat = 0;
 
     // implementation of article service
     public shared(_) func addArticle(newArticle : Article.Article) : async Result.Result<Article.Article, Text> {
         articleCounter += 1;
-
+        
         let articleId = articleCounter;
         let articleWithId = { newArticle with id = articleId };
 
@@ -34,11 +51,110 @@ actor {
       return ArticleService.getAllArticles(articlesMap);
     };
 
-    public query func getArticleByOwner(authorId : Principal) : async[Article.Article] {
+    public query func getArticleByAuthor(authorId : Principal) : async[Article.Article] {
         return ArticleService.getArticleByAuthor(articlesMap, authorId)
     };
     public query func getArticleDetail(articleId : Nat) : async ?Article.Article {
         return ArticleService.getArticleDetail(articlesMap, articleId);
     };
 
+
+    // implementation of community service function
+    public shared(_) func createCommunity(newCommunity : Community.Community) : async Result.Result<Community.Community, Text> {
+        communityCounter += 1;
+
+        let communityId = communityCounter;
+        let communityWIthId = { newCommunity with id = communityId };
+
+        return CommunityService.createCommunity(communityMap, communityId, communityWIthId);
+    };
+
+     public shared(_) func updateCommunity(communityId : Nat, updatedCommunity : Community.Community) : async Result.Result<Community.Community, Text> {
+        return CommunityService.updateCommmunity(communityMap, communityId, updatedCommunity);
+    };
+    
+    public shared(_) func deleteCommunity(communityId : Nat) : async Result.Result<Text, Text> {
+        return CommunityService.deleteCommunity(communityMap, communityId);
+    };
+
+    public query func getAllCommunity() : async [Community.Community] {
+      return CommunityService.getAllCommunity(communityMap);
+    };
+
+    public query func getCommunityByUser(authorCommunity : Principal) : async[Community.Community] {
+        return CommunityService.getCommunityByUser(communityMap, authorCommunity)
+    };
+
+    public query func getDetailCommunity(communityId : Nat) : async ?Community.Community {
+        return CommunityService.getCommunityDetail(communityMap, communityId);
+    };
+
+    public shared(_) func joinCommunity(communityId : Nat, userId : Principal, username : Text, avatar : ?Text, hasProfile : Bool) : async Text {
+        let user : User.User = {
+            id = userId;
+            username = username;
+            avatar = avatar;
+            hasProfile = hasProfile;
+        };
+
+        let result = CommunityService.joinCommunity(communityMap, communityId, userId);
+
+        switch (result) {
+            case (#ok(msg)) msg;
+            case (#err(e)) "Error: " # e;
+        };
+    };
+
+    // implementation of discussion service
+    public shared(_) func createDiscussion(newDiscussion : Discussion.Discussion) : async Result.Result<Discussion.Discussion, Text> {
+        discussionCounter += 1;
+
+        let discussionId = discussionCounter;
+        let discussionWIthId = { newDiscussion with id = discussionId };
+
+        return DiscussionService.createDiscussion( discussionMap, discussionId, discussionWIthId.communityId, discussionWIthId);
+    };
+
+    public shared(_) func updateDiscussion(discussionId : Nat, updatedDiscussion : Discussion.Discussion) : async Result.Result<Discussion.Discussion, Text> {
+        return DiscussionService.updateDiscussion(discussionMap, discussionId, updatedDiscussion);
+    };
+
+    public shared(_) func deleteDiscussion(discussionId : Nat) : async Result.Result<Text, Text> {
+        return DiscussionService.deleteDiscussion(discussionMap, discussionId);
+    };
+
+    public query func getAllDiscussion() : async [Discussion.Discussion] {
+      return DiscussionService.getAllDiscussion(discussionMap);
+    };
+
+    public query func getDiscussionByUser(authorDiscussion : Principal) : async[Discussion.Discussion] {
+        return DiscussionService.getDiscussionByUser(discussionMap, authorDiscussion)
+    };
+
+    public query func getDetailDiscussion(discussionId : Nat) : async ?Discussion.Discussion {
+        return DiscussionService.getDetailDiscussion(discussionMap, discussionId);
+    };
+
+    // implementation of discussion reply service
+    public shared(_) func createDiscussionReply(newDiscussionReply : DiscussionReply.DiscussionReply) : async Result.Result<DiscussionReply.DiscussionReply, Text> {
+        discussionReplyCounter += 1;
+
+        let discussionReplyId = discussionReplyCounter;
+        let discussionReplyWIthId = { newDiscussionReply with id = discussionReplyId };
+
+        return DiscussionReplyService.createDiscussionReply( discussionReplyMap, discussionReplyId, discussionReplyWIthId);
+    };
+
+    public shared(_) func updateDiscussionReply(discussionReplyId : Nat, updatedDiscussionReply : DiscussionReply.DiscussionReply) : async Result.Result<DiscussionReply.DiscussionReply, Text> {
+        return DiscussionReplyService.updateDiscussionReply(discussionReplyMap, discussionReplyId, updatedDiscussionReply);
+    };
+
+    public shared(_) func deleteDiscussionReply(discussionReplyId : Nat) : async Result.Result<Text, Text> {
+        return DiscussionReplyService.deleteDiscussionReply(discussionReplyMap, discussionReplyId);
+    };
+
+    public query func getRepliesByDiscussionId(discussionId : Nat) : async[DiscussionReply.DiscussionReply] {
+        return DiscussionReplyService.getRepliesByDiscussionId(discussionReplyMap, discussionId)
+    };
+    
 };

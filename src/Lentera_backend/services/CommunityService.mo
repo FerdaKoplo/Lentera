@@ -12,16 +12,19 @@ module {
         Iter.toArray(communities.vals());
     };
 
-
     public func getCommunityByUser(communities : Community.Communities, authorId : Principal) : [Community.Community] {
          Iter.toArray(
             Iter.filter<Community.Community>(
                 communities.vals(),
                 func(c) {
-                     c.authorCommunity.id == authorId
+                     c.authorCommunityId == authorId
                 }
             )
         )
+    };
+
+    public func getCommunityDetail(community : Community.Communities, communityId: Nat) : ?Community.Community {
+        community.get(communityId);
     };
 
     public func createCommunity(communities : Community.Communities, communityId : Nat, newCommunity : Community.Community ) : Result.Result<Community.Community, Text> {
@@ -32,7 +35,7 @@ module {
         let now = Time.now();
         let communityWithTimestamp : Community.Community = {
             id = communityId;
-            authorCommunity = newCommunity.authorCommunity;
+            authorCommunityId = newCommunity.authorCommunityId;
             communityTitle = newCommunity.communityTitle;
             communityBanner = newCommunity.communityBanner;
             communityMember = newCommunity.communityMember;
@@ -66,13 +69,13 @@ module {
         };
     };
 
-    public func joinCommunity( communities : Community.Communities, communityId : Nat, user : User.User ) : Result.Result<Text, Text> {
+    public func joinCommunity( communities : Community.Communities, communityId : Nat, userId : Principal ) : Result.Result<Text, Text> {
         switch (communities.get(communityId)) {
             case (?comm) {
                 let alreadyJoined = Iter.filter<CommunityMember.CommunityMember>(
                     Iter.fromArray(comm.communityMember),
                     func(m : CommunityMember.CommunityMember) : Bool {
-                        m.userId.id == user.id
+                        m.userId == userId
                     }
                 ).next() != null;
 
@@ -82,13 +85,13 @@ module {
 
                 let newMember : CommunityMember.CommunityMember = {
                     id = comm.communityMember.size();
-                    userId = user;
+                    userId = userId;
                     isEntry = true;
                 };
 
                 let updatedCommunity : Community.Community = {
                     id = comm.id;
-                    authorCommunity = comm.authorCommunity;
+                    authorCommunityId = comm.authorCommunityId;
                     communityTitle = comm.communityTitle;
                     communityBanner = comm.communityBanner;
                     communityMember = Array.append(comm.communityMember, [newMember]);
