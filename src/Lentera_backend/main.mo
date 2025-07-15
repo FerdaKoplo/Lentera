@@ -16,6 +16,7 @@ import DiscussionReplyService "services/DiscussionReplyService";
 import UserService "services/UserService";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
+import Time "mo:base/Time";
 actor {
     stable var stableUser : [User.User] = [];
   var userMap : User.Users = HashMap.HashMap(0, Principal.equal, Principal.hash);
@@ -103,6 +104,7 @@ actor {
             username = username;
             avatar = avatar;
             hasProfile = hasProfile;
+            createdAt = null;
         };
 
         let result = CommunityService.joinCommunity(communityMap, communityId, userId);
@@ -199,7 +201,7 @@ actor {
     return UserService.getUserByUsername(userMap, username);
   };
 
-  public shared(msg) func updateUserProfile(username: Text, avatarUrl: ?Text) : async Result.Result<User.User, Text> {
+  public shared(msg) func updateUserProfile(username: Text, avatar: ?Text) : async Result.Result<User.User, Text> {
     let caller = msg.caller;
     switch (userMap.get(caller)) {
       case null return #err("User not found");
@@ -207,7 +209,7 @@ actor {
         let updated: User.User = {
           id = user.id;
           username = username;
-          avatarUrl = avatarUrl;
+          avatar = avatar;
           hasProfile = true; 
           createdAt = user.createdAt;
         };
@@ -220,4 +222,5 @@ actor {
       };
     };
   };
+};
     

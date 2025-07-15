@@ -37,7 +37,7 @@ const EditProfile: React.FC = () => {
       );
       if ("ok" in result) {
         await refreshUser();
-        navigate("/user-profile");
+        navigate("/profile");
       } else {
         setError(result.err);
       }

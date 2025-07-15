@@ -26,9 +26,9 @@ module {
                 let newUser : User.User = {
                     id = userId;
                     username = username;
-                    avatarUrl = null;
+                    avatar = null;
                     hasProfile = false;
-                    createdAt = Time.now();
+                    createdAt = ?Time.now();
                 };
                 users.put(userId, newUser);
                 #ok(newUser);

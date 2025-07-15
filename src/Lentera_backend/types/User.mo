@@ -8,8 +8,8 @@
         public type User = {
             id : Principal;
             username : Text;
-            avatarUrl : ?Text;
+            avatar : ?Text;
             hasProfile : Bool;
-            createdAt : Time.Time;
+            createdAt : ?Time.Time;
         };
     };
