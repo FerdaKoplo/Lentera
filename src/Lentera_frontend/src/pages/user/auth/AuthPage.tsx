@@ -28,10 +28,6 @@ const AuthPage = () => {
     }
   }, [isAuthenticated, isLoading, user, navigate]);
 
-  // useEffect(() => {
-  //   console.log("DEBUG: ", { isAuthenticated, isLoading, user });
-  // }, [isAuthenticated, isLoading, user]);
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">

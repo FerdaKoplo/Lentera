@@ -3,6 +3,7 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Array "mo:base/Array";
+import Time "mo:base/Time";
 module {
       public func registerUser(users : User.Users, userId : Principal, username : Text) : Result.Result<User.User, Text> {
         if (Text.size(username) < 3) {
@@ -26,6 +27,7 @@ module {
                     username = username;
                     avatarUrl = null;
                     hasProfile = false;
+                    createdAt = Time.now();
                 };
                 users.put(userId, newUser);
                 #ok(newUser);

@@ -54,6 +54,7 @@ actor {
           username = username;
           avatarUrl = avatarUrl;
           hasProfile = true; 
+          createdAt = user.createdAt;
         };
         userMap.put(caller, updated);
 
