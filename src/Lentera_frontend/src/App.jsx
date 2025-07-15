@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import AuthPage from "./pages/user/auth/AuthPage";
@@ -6,6 +7,8 @@ import EditProfile from "./pages/user/profile/EditProfile";
 import ProfileLayout from "./layouts/ProfileLayout";
 import ProfilePage from "./pages/user/profile/ProfilePage";
 import ProfileAnalytics from "./pages/user/profile/ProfileAnalytics";
+import SideBarPrincipal from './components/principal/sidebar-principal';
+import CreateArticle from './pages/principal/articles/create-article';
 
 function AppRoutes() {
   const { isAuthenticated, isLoading, user } = useAuth();

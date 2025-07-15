@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ProseMirror p.is-empty::before {
+    content: attr(data-placeholder);
+    color: #aaa;
+    float: left;
+    pointer-events: none;
+    height: 0;
+  }
+
+@layer utilities {
+  .mint-violet {
+    @apply bg-gradient-to-r from-[#BCA7E8] to-[#A8E6CF] bg-clip-text text-transparent;
+  }
+
+  .editor-no-outline .ProseMirror {
+    outline: none;
+  }
+}
