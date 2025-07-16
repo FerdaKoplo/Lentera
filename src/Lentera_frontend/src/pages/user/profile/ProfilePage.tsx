@@ -25,9 +25,9 @@ const ProfilePage = () => {
         )
       : "Unknown";
 
-  if (!isAuthenticated) {
+  /*  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
-  }
+  } */
 
   return (
     <div className="  flex items-center justify-center w-full h-full bg-white relative overflow-hidden">
