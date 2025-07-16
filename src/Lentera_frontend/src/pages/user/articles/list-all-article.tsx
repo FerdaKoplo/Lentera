@@ -7,6 +7,10 @@ const ListAllArticle = () => {
 
   const { article, articles, getAllArticles } = useArticle()
 
+  const getPlainText = (htmlString: string) => {
+    return htmlString.replace(/<[^>]+>/g, '')
+  }
+
 
   useEffect(() => {
     getAllArticles()
@@ -14,7 +18,6 @@ const ListAllArticle = () => {
 
   return (
     <div>
-
       <div className='px-32'>
         <div className=''>
           <h1 className='text-3xl font-semibold mint-violet'>Articles</h1>
@@ -26,7 +29,7 @@ const ListAllArticle = () => {
               {articles.map((article, i) => (
                 <div key={i}>
                   <div>
-                    <img src="" alt="" />
+                    <img src={article.articleImage} alt={article.articleTitle} className="w-full h-48 object-cover" />
                   </div>
                   <div className='flex flex-col gap-6'>
 
@@ -39,7 +42,7 @@ const ListAllArticle = () => {
 
                     {/* Summary Content */}
                     <div>
-                      <p className='line-clamp-4'>{article.articleContent}</p>
+                      <p className='line-clamp-4'>{getPlainText(article.articleContent)}</p>
                     </div>
 
                     <div className='flex justify-between'>
@@ -60,7 +63,7 @@ const ListAllArticle = () => {
                       </div>
                       {/* View button */}
                       <div>
-                        <ViewButton />
+                        <ViewButton articleId={article.id} />
                       </div>
                     </div>
                   </div>

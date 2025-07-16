@@ -1,6 +1,6 @@
 import React from 'react'
 
-const DetailArticle = () => {
+const ListAllCommunity = () => {
   return (
     <div>
         
@@ -8,4 +8,4 @@ const DetailArticle = () => {
   )
 }
 
-export default DetailArticle
+export default ListAllCommunity

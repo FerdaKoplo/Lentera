@@ -1,3 +1,4 @@
+
 import Article "types/Article";
 import HashMap "mo:base/HashMap";
 import Principal "mo:base/Principal";
@@ -12,7 +13,15 @@ import Discussion "types/Discussion";
 import DiscussionService "services/DiscussionService";
 import DiscussionReply "types/DiscussionReply";
 import DiscussionReplyService "services/DiscussionReplyService";
+import UserService "services/UserService";
+import Iter "mo:base/Iter";
+import Array "mo:base/Array";
+import Time "mo:base/Time";
 actor {
+    stable var stableUser : [User.User] = [];
+    var userMap : User.Users = HashMap.HashMap(0, Principal.equal, Principal.hash);
+
+    
     stable var stableArticles : [Article.Article] = [] : [Article.Article];
     let articlesMap = HashMap.HashMap<Nat, Article.Article>(0, Nat.equal, Hash.hash);
     var articleCounter : Nat = 0;
@@ -42,7 +51,10 @@ actor {
     public shared(_) func updateArticle(articleId : Nat, updatedArticle : Article.Article) : async Result.Result<Article.Article, Text> {
         return ArticleService.updateArticle(articlesMap, articleId, updatedArticle);
     };
-    
+
+    public shared(_) func updateArticleThumbnail(articleId : Nat, newThumbnail : Text) : async Result.Result<Article.Article, Text> {
+        return ArticleService.(articlesMap, articleId, newThumbnail);
+    };
     public shared(_) func deleteArticle(articleId : Nat) : async Result.Result<Text, Text> {
         return ArticleService.deleteArticle(articlesMap, articleId);
     };
@@ -57,7 +69,6 @@ actor {
     public query func getArticleDetail(articleId : Nat) : async ?Article.Article {
         return ArticleService.getArticleDetail(articlesMap, articleId);
     };
-
 
     // implementation of community service function
     public shared(_) func createCommunity(newCommunity : Community.Community) : async Result.Result<Community.Community, Text> {
@@ -99,6 +110,16 @@ actor {
         };
     };
 
+    public shared(_) func leaveCommunity(communityId : Nat, userId : Principal) : async Text {
+       
+        let result = CommunityService.leaveCommunity(communityMap, communityId, userId);
+
+        switch (result) {
+            case (#ok(msg)) msg;
+            case (#err(e)) "Error: " # e;
+        };
+    };
+
     // implementation of discussion service
     public shared(_) func createDiscussion(newDiscussion : Discussion.Discussion) : async Result.Result<Discussion.Discussion, Text> {
         discussionCounter += 1;
@@ -129,6 +150,7 @@ actor {
         return DiscussionService.getDetailDiscussion(discussionMap, discussionId);
     };
 
+
     // implementation of discussion reply service
     public shared(_) func createDiscussionReply(newDiscussionReply : DiscussionReply.DiscussionReply) : async Result.Result<DiscussionReply.DiscussionReply, Text> {
         discussionReplyCounter += 1;
@@ -151,4 +173,88 @@ actor {
         return DiscussionReplyService.getRepliesByDiscussionId(discussionReplyMap, discussionId)
     };
     
+  system func preupgrade() {
+    stableUser := Iter.toArray(userMap.vals());
+    stableArticles := Iter.toArray(articlesMap.vals());
+    stableCommunites := Iter.toArray(communityMap.vals());
+    stableDiscussions := Iter.toArray(discussionMap.vals());
+    stableDiscussionReplies := Iter.toArray(discussionReplyMap.vals());
+  };
+
+  system func postupgrade() {
+    for (user in stableUser.vals()) {
+      userMap.put(user.id, user);
+    };
+
+    for (article in stableArticles.vals()) {
+        articlesMap.put(article.id, article);
+    };
+
+    for (community in stableCommunites.vals()) {
+        communityMap.put(community.id, community);
+    };
+
+    for (discussion in stableDiscussions.vals()) {
+        discussionMap.put(discussion.id, discussion);
+    };
+
+    for (reply in stableDiscussionReplies.vals()) {
+        discussionReplyMap.put(reply.id, reply);
+    };
+
+    stableArticles := [];
+    stableCommunites := [];
+    stableDiscussions := [];
+    stableDiscussionReplies := [];
+    stableUser := [];
+  };
+
+  // Fungsi user
+  public shared(msg) func registerUser(username : Text) : async Result.Result<User.User, Text> {
+    let caller = msg.caller;
+    let result = UserService.registerUser(userMap, caller, username);
+    switch (result) {
+      case (#ok(user)) return #ok(user);
+      case (#err(e)) return #err(e);
+    }
+  };
+
+  public shared query func getUserByPrincipal(p : Principal) : async Result.Result<User.User, Text> {
+    switch (userMap.get(p)) {
+      case (?user) return #ok(user);
+      case null return #err("User not found");
+    }
+  };
+
+  public shared(msg) func getCurrentUser() : async ?User.User {
+    let caller = msg.caller;
+    return UserService.getCurrentUser(Iter.toArray(userMap.vals()), caller);
+  };
+
+  public query func getUserByUsername(username : Text) : async ?User.User {
+    return UserService.getUserByUsername(userMap, username);
+  };
+
+  public shared(msg) func updateUserProfile(username: Text, avatar: ?Text) : async Result.Result<User.User, Text> {
+    let caller = msg.caller;
+    switch (userMap.get(caller)) {
+      case null return #err("User not found");
+      case (?user) {
+        let updated: User.User = {
+          id = user.id;
+          username = username;
+          avatar = avatar;
+          hasProfile = true; 
+          createdAt = user.createdAt;
+        };
+        userMap.put(caller, updated);
+
+        stableUser := Array.filter<User.User>(stableUser, func(u) { u.id != caller });
+        stableUser := Array.append(stableUser, [updated]);
+
+        return #ok(updated);
+      };
+    };
+  };
 };
+    
