@@ -53,7 +53,7 @@ actor {
     };
 
     public shared(_) func updateArticleThumbnail(articleId : Nat, newThumbnail : Text) : async Result.Result<Article.Article, Text> {
-        return ArticleService.(articlesMap, articleId, newThumbnail);
+        return ArticleService.updateArticleThumbnail(articlesMap, articleId, newThumbnail);
     };
     public shared(_) func deleteArticle(articleId : Nat) : async Result.Result<Text, Text> {
         return ArticleService.deleteArticle(articlesMap, articleId);

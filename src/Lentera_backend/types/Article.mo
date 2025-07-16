@@ -12,7 +12,7 @@ module {
         authorArticleId : Principal;
         articleTitle : Text;
         articleContent : Text;
-        articleImage : Text;
+        articleImage : Text ;
         createdAt : Time.Time;
     };
 };
