@@ -37,6 +37,19 @@ const useCommunity = () => {
     }
   }
 
+  const getJoinedCommunites = async (userId : Principal) => {
+    setLoading(true)
+    try {
+      const resultFetch = await Lentera_backend.getAllJoinedCommunities(userId)
+      setCommunities(resultFetch)
+    } catch (e) {
+      setError(String(e))
+    }
+    finally {
+      setLoading(false)
+    }
+  }
+
   const getCommunityDetail = async (communityId: bigint) => {
     setLoading(true)
     try {
@@ -143,6 +156,7 @@ const useCommunity = () => {
     error,
     getAllCommunities,
     getAllCommunitiesAuthor,
+    getJoinedCommunites,
     getCommunityDetail,
     createCommunity,
     updateCommunity,

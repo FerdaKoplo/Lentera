@@ -141,4 +141,24 @@ module {
             };
         };
     };
+
+    public func getAllJoinedCommunities( communities: Community.Communities, userId: Principal ): [Community.Community] {
+     Iter.toArray(
+            Iter.filter<Community.Community>(
+                communities.vals(),
+                func(c: Community.Community): Bool {
+                    var found = false;
+                    let members = Iter.fromArray(c.communityMember);
+                    label searchLoop for (member in members) {
+                        if (member.userId == userId) {
+                            found := true;
+                            break searchLoop;
+                        };
+                    };
+                    found
+                }
+            )
+        )
+    }
+
 };

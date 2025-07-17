@@ -8,9 +8,14 @@ import ProfilePage from "./pages/user/profile/ProfilePage";
 import ProfileAnalytics from "./pages/user/profile/ProfileAnalytics";
 import CreateArticle from './pages/user/articles/create-article';
 import ListArticleAuthor from "./pages/user/articles/list-author-article";
-import ListAllArticle from "./pages/user/articles/list-all-article";
+import ListAllArticle from "./pages/user/public-page/article/list-all-article";
 import UpdateThumbnailArticle from "./pages/user/articles/update-thumbnail-article";
-import DetailArticle from "./pages/user/articles/detail-article";
+import DetailArticle from "./pages/user/public-page/article/detail-article";
+import ListAuthorCommunity from "./pages/user/community/list-author-community";
+import CreateCommunity from "./pages/user/community/create-community";
+import ListAllCommunity from "./pages/user/public-page/community/list-all-community";
+import CommunityLayout from "./layouts/CommunityLayout";
+import DetailCommunity from "./pages/user/public-page/community/detail-community";
 
 function AppRoutes() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -62,11 +67,32 @@ function AppRoutes() {
         }
       />
 
+      <Route
+        path="/create-community"
+        element={
+          isAuthenticated ? <CreateCommunity /> : <Navigate to="/login" replace />
+        }
+      />
+
+      <Route
+        path="/detail-community/:id"
+        element={
+          <DetailCommunity />
+        }
+      />
+
+
+      <Route path="/community" element={<CommunityLayout />}>
+        <Route index element={<ListAllCommunity />} />
+        {/* <Route path="discover" element={<ProfileAnalytics />} />
+        <Route path="your-community" element={< />} /> */}
+      </Route>
 
       <Route path="/profile" element={<ProfileLayout />}>
         <Route index element={<ProfilePage />} />
         <Route path="analytics" element={<ProfileAnalytics />} />
         <Route path="articles" element={<ListArticleAuthor />} />
+        <Route path="community" element={<ListAuthorCommunity />} />
       </Route>
 
     </Routes>

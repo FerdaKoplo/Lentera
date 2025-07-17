@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import useArticle from '../../../hooks/useArticle'
+import useArticle from '../../../../hooks/useArticle'
 import { useParams } from 'react-router-dom'
 
 const DetailArticle = () => {

@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
-import ViewButton from '../../../components/universal-buttons/view-button'
+import ViewButton from '../../../components/article/view-button'
 import useArticle from '../../../hooks/useArticle'
 import useAuth from '../../../hooks/useAuth'
 import { Principal } from '@dfinity/principal'
 import { FaPlus, FaUserCircle } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
+import { IoMdImage } from "react-icons/io";
 
 const ListArticleAuthor = () => {
     const { user, isLoading, principalId } = useAuth()
@@ -60,7 +61,7 @@ const ListArticleAuthor = () => {
                                             <p className='line-clamp-4'>{getPlainText(article.articleContent)}</p>
                                         </div>
 
-                                        <div className='flex justify-between'>
+                                        <div className='flex justify-between gap-5'>
                                             {/* Profile Author */}
                                             <div className='flex items-center gap-2'>
                                                 <div className='text-3xl'>
@@ -72,18 +73,20 @@ const ListArticleAuthor = () => {
                                                 </div>
                                             </div>
 
-                                            <Link to={`/update-thumbnail/${article.id.toString()}`}>
-                                                <button className='bg-blue-500 text-white px-3 py-1 rounded'>
-                                                    Update Thumbnail
-                                                </button>
-                                            </Link>
-                                            {/* Like Button */}
-                                            <div>
+                                            <div className='flex items-center gap-5'>
+                                                <Link to={`/update-thumbnail/${article.id.toString()}`}>
+                                                    <button className='font-bold flex bg-gradient-to-r text-white py-2 px-2 rounded-full from-[#BCA7E8] to-[#A8E6CF]'>
+                                                        <IoMdImage />
+                                                    </button>
+                                                </Link>
+                                                {/* Like Button */}
+                                                <div>
 
-                                            </div>
-                                            {/* View button */}
-                                            <div>
-                                                <ViewButton articleId={article.id}/>
+                                                </div>
+                                                {/* View button */}
+                                                <div>
+                                                    <ViewButton articleId={article.id} />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

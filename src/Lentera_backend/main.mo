@@ -120,6 +120,11 @@ actor {
         };
     };
 
+    public query func getAllJoinedCommunities(userId: Principal) : async [Community.Community] {
+      return CommunityService.getAllJoinedCommunities(communityMap, userId);
+    };
+
+
     // implementation of discussion service
     public shared(_) func createDiscussion(newDiscussion : Discussion.Discussion) : async Result.Result<Discussion.Discussion, Text> {
         discussionCounter += 1;

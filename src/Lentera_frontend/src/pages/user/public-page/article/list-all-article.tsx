@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
-import useArticle from '../../../hooks/useArticle'
+import useArticle from '../../../../hooks/useArticle'
 import { FaUserCircle } from "react-icons/fa";
-import ViewButton from '../../../components/universal-buttons/view-button';
+import ViewButton from '../../../../components/article/view-button';
+import NavApp from '../../../../components/public-nav/nav-app';
 
 const ListAllArticle = () => {
 
@@ -18,6 +19,7 @@ const ListAllArticle = () => {
 
   return (
     <div>
+      <NavApp />
       <div className='px-32'>
         <div className=''>
           <h1 className='text-3xl font-semibold mint-violet'>Articles</h1>
