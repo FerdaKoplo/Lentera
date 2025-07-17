@@ -82,6 +82,7 @@ function AppRoutes() {
       />
 
 
+
       <Route path="/community" element={<CommunityLayout />}>
         <Route index element={<ListAllCommunity />} />
         {/* <Route path="discover" element={<ProfileAnalytics />} />

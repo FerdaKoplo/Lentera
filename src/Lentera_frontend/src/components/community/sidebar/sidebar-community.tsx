@@ -1,11 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FaUserFriends } from 'react-icons/fa'
 import { FaCompass, FaPlus } from 'react-icons/fa6'
 import { IoMdHome } from 'react-icons/io'
 import { Link } from 'react-router-dom'
 import SidebarMenuCommunity from './sidebar-menu-community'
+import useCommunity from '../../../hooks/useCommunity'
+import useAuth from '../../../hooks/useAuth'
+import { Principal } from '@dfinity/principal'
 
 const SidebarCommunity = () => {
+
+    const { communities, getJoinedCommunites } = useCommunity()
+    const { principalId } = useAuth()
+
 
     const menuItems = [
         {
@@ -25,11 +32,19 @@ const SidebarCommunity = () => {
         }
     ]
 
-    const joinedCommunities = [
-        { name: "Fighting Anxiety" },
-        { name: "Tech Enthusiasts" },
-        { name: "Book Lovers" }
-    ]
+    useEffect(() => {
+        if (principalId && principalId.trim() !== "") {
+            try {
+                const authorId = Principal.fromText(principalId);
+                getJoinedCommunites(authorId);
+                console.log("Fetching articles for:", authorId.toString());
+            } catch (error) {
+                console.error("Invalid principalId received:", principalId);
+            }
+        } else {
+            console.warn("principalId is missing, skipping fetch.");
+        }
+    }, [principalId, getJoinedCommunites])
 
     return (
         <div className='flex flex-col gap-4'>
@@ -64,12 +79,18 @@ const SidebarCommunity = () => {
                 </div>
 
                 <ul className='flex flex-col gap-3'>
-                    {joinedCommunities.map((community, idx) => (
+                    {communities.slice(0, 3).map((community, idx) => (
                         <li key={idx} className='flex items-center gap-3'>
                             <FaUserFriends className='text-xl' />
-                            <h1 className='font-bold'>{community.name}</h1>
+                            <h1 className='font-bold'>{community.communityTitle}</h1>
                         </li>
                     ))}
+
+                    {communities.length > 3 && (
+                        <li className='text-center text-gray-400 font-semibold'>
+                            ...
+                        </li>
+                    )}
                 </ul>
             </div>
 

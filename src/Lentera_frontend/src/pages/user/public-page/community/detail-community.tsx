@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import useCommunity from '../../../../hooks/useCommunity'
 import useDiscussion from '../../../../hooks/useDiscussion'
@@ -8,17 +8,20 @@ import NavApp from '../../../../components/public-nav/nav-app'
 import { FaUserFriends } from 'react-icons/fa'
 import useAuth from '../../../../hooks/useAuth'
 import { Principal } from '@dfinity/principal'
+import ReplyButton from '../../../../components/community/buttons/reply-button'
+import DiscussionReply from '../../../../components/discussion/discussion-reply'
 
 const DetailCommunity: React.FC = () => {
     const { id } = useParams<{ id: string }>()
-    const { 
-        getCommunityDetail, 
-        community, 
-        joinCommunity, 
-        leaveCommunity 
+    const {
+        getCommunityDetail,
+        community,
+        joinCommunity,
+        leaveCommunity
     } = useCommunity()
     const { discussions, getDiscussionsByCommunity } = useDiscussion()
     const { principalId, isAuthenticated } = useAuth()
+    const [activeReplyDiscussionId, setActiveReplyDiscussionId] = useState<bigint | null>(null)
 
     useEffect(() => {
         if (id) {
@@ -49,6 +52,14 @@ const DetailCommunity: React.FC = () => {
     const handleLeave = async () => {
         await leaveCommunity(communityId, Principal.fromText(principalId))
         await getCommunityDetail(communityId)
+    }
+
+    const toggleReplySection = (discussionId: bigint) => {
+        if (activeReplyDiscussionId === discussionId) {
+            setActiveReplyDiscussionId(null)
+        } else {
+            setActiveReplyDiscussionId(discussionId)
+        }
     }
 
     return (
@@ -131,6 +142,17 @@ const DetailCommunity: React.FC = () => {
                                 <p className="text-gray-700 mb-4">
                                     {discussion.discussionContent}
                                 </p>
+
+                                <div className="flex justify-end">
+                                    <ReplyButton onClick={() => toggleReplySection(discussion.id)} />
+                                </div>
+
+                                {activeReplyDiscussionId === discussion.id && (
+                                    <DiscussionReply
+                                        discussionId={discussion.id}
+                                        currentPrincipal={principalId}
+                                    />
+                                )}
                             </div>
                         ))}
                     </div>
