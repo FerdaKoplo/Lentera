@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { FaPlus, FaUserFriends } from "react-icons/fa";
 import SidebarProfile from '../../../components/profile/SidebarProfile';
-import ViewButton from '../../../components/community/view-button';
-import HelperAuthorCommunityButton from '../../../components/community/helper-button';
+import ViewButton from '../../../components/community/buttons/view-button';
+import HelperAuthorCommunityButton from '../../../components/community/buttons/helper-button';
 import { Link } from 'react-router-dom';
 import useCommunity from '../../../hooks/useCommunity';
 import useAuth from '../../../hooks/useAuth';

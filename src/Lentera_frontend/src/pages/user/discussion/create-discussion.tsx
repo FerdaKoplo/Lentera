@@ -50,7 +50,7 @@ const PostDiscussionForm: React.FC<PostDiscussionFormProps> = ({ communityId }) 
   }
 
   return (
-    <div className="bg-[#F8F8F8] rounded-lg p-4 mb-6 shadow-sm">
+    <div className="rounded-lg p-4 mb-6 shadow-sm">
       <div className="mb-3 text-sm font-semibold text-gray-600">Start a new discussion in this community</div>
       <input
         type="text"
@@ -69,7 +69,7 @@ const PostDiscussionForm: React.FC<PostDiscussionFormProps> = ({ communityId }) 
       <button
         onClick={handleSubmit}
         disabled={submitting}
-        className="mt-3 bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded"
+        className="mt-3 bg-gradient-to-r from-[#BCA7E8] to-[#A8E6CF] rounded-full text-white font-semibold px-4 py-2 "
       >
         {submitting ? "Posting..." : "Post Discussion"}
       </button>

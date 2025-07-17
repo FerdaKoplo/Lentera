@@ -155,6 +155,10 @@ actor {
         return DiscussionService.getDetailDiscussion(discussionMap, discussionId);
     };
 
+    public query func getDiscussionsByCommunity(communityId: Nat): async [Discussion.Discussion] {
+      return DiscussionService.getDiscussionsByCommunity(discussionMap, communityId);
+    };
+
 
     // implementation of discussion reply service
     public shared(_) func createDiscussionReply(newDiscussionReply : DiscussionReply.DiscussionReply) : async Result.Result<DiscussionReply.DiscussionReply, Text> {

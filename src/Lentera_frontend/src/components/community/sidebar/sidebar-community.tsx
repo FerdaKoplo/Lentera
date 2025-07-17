@@ -19,7 +19,7 @@ const SidebarCommunity = () => {
             icon: <FaCompass className='text-xl' />
         },
         {
-            label: "Community",
+            label: "Your Community",
             path: "/profile/community",
             icon: <FaUserFriends className='text-xl' />
         }
