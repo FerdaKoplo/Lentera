@@ -230,9 +230,15 @@ actor {
   };
 
   // implementasi dari fungsi journal
-  public shared(msg) func createJournal(note: Text, mood: Text, emotions: ?[Text], emotionTrigger: ?[Text]) : async Result.Result<Journal.Journal, Text> {
+  public shared(msg) func createJournal(
+    note: Text,
+    mood: Text,
+    emotions: ?[Text],
+    emotionTrigger: ?[Text],
+    timestamp: Time.Time // tambahan baru
+  ) : async Result.Result<Journal.Journal, Text> {
     let caller = msg.caller;
-    return journalService.createJournal(caller, note, mood, emotions, emotionTrigger);
+    return journalService.createJournal(caller, note, mood, emotions, emotionTrigger, timestamp);
   };
 
   public shared(msg) func getMyJournal() : async ?[Journal.Journal] {

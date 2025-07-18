@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
 import { Lentera_backend } from "../../../declarations/Lentera_backend";
 import type { Journal } from "../../../declarations/Lentera_backend/Lentera_backend.did";
-import { useProfile } from "./useProfile"; // pastikan path ini sesuai
 
 const useJournal = () => {
   const [myJournals, setMyJournals] = useState<Journal[]>([]);
   const [allJournals, setAllJournals] = useState<Journal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const { profile } = useProfile();
 
   // Fetch journal milik user
   const fetchMyJournals = async () => {
@@ -29,6 +26,7 @@ const useJournal = () => {
   const createJournal = async (
     note: string,
     mood: string,
+    timestamp: bigint,
     emotions?: string[],
     emotionTrigger?: string[]
   ) => {
@@ -38,7 +36,8 @@ const useJournal = () => {
         note,
         mood,
         emotions ? [emotions] : [],
-        emotionTrigger ? [emotionTrigger] : []
+        emotionTrigger ? [emotionTrigger] : [],
+        timestamp
       );
       if ("ok" in result) {
         setMyJournals((prev) => [result.ok, ...prev]);

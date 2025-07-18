@@ -14,3 +14,8 @@ export function formatTime(timeNum: bigint) {
     minute: "2-digit",
   });
 }
+
+export function toNanoTimestamp(date: string, time: string): bigint {
+  const combined = new Date(`${date}T${time}`);
+  return BigInt(combined.getTime()) * BigInt(1_000_000);
+}

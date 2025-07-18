@@ -39,9 +39,9 @@ module {
       note : Text,
       mood : Text,
       emotions : ?[Text],
-      emotionTrigger : ?[Text]
+      emotionTrigger : ?[Text],
+      timestamp : Time.Time
     ) : Result.Result<Journal, Text> {
-      let now = Time.now();
       let newId = generateJournalId(userId);
 
       let newJournal : Journal = {
@@ -51,8 +51,8 @@ module {
         mood = mood;
         emotions = emotions;
         emotionTrigger = emotionTrigger;
-        timeCreated = now;
-        dateCreated = now; 
+        timeCreated = timestamp;
+        dateCreated = timestamp;
       };
       let existing = switch (journalMap.get(userId)) {
         case (?list) list;

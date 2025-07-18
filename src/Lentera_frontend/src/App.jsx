@@ -9,6 +9,8 @@ import ProfileAnalytics from "./pages/user/profile/ProfileAnalytics";
 import SideBarPrincipal from "./components/principal/sidebar-principal";
 import CreateArticle from "./pages/principal/articles/create-article";
 import ProfileJournal from "./pages/user/profile/ProfileJournal";
+import CreateMoodPage from "./pages/journal/CreateMoodPage";
+import CreateJournalPage from "./pages/journal/CreateJournalPage";
 
 function AppRoutes() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -36,6 +38,18 @@ function AppRoutes() {
         <Route path="analytics" element={<ProfileAnalytics />} />
         <Route path="journals" element={<ProfileJournal />} />
       </Route>
+      <Route
+        path="/create-journal"
+        element={<CreateMoodPage />}
+        //   isAuthenticated ? <EditProfile /> : <Navigate to="/login" replace />
+        // }
+      />
+      <Route
+        path="/create-journal/details"
+        element={<CreateJournalPage />}
+        //   isAuthenticated ? <EditProfile /> : <Navigate to="/login" replace />
+        // }
+      />
     </Routes>
   );
 }
