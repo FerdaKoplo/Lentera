@@ -1,5 +1,6 @@
 import React from 'react'
 import { FaUserCircle } from "react-icons/fa";
+import { Link } from 'react-router-dom';
 
 const NavApp = () => {
   return (
@@ -9,14 +10,18 @@ const NavApp = () => {
       </div>
 
       <ul className='flex items-center gap-7'>
-        <li>
+        <Link to={'/community/homepage'}>
+          <li>
             Community
-        </li>
-        <li>
+          </li>
+        </Link>
+        <Link to={'/articles'}>
+          <li>
             Articles
-        </li>
+          </li>
+        </Link>
         <li className='text-3xl'>
-            <FaUserCircle />
+          <FaUserCircle />
         </li>
       </ul>
     </nav>

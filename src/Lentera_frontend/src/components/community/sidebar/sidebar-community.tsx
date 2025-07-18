@@ -81,9 +81,15 @@ const SidebarCommunity = () => {
                 <ul className='flex flex-col gap-3'>
                     {communities.slice(0, 3).map((community, idx) => (
                         <li key={idx} className='flex items-center gap-3'>
-                            <FaUserFriends className='text-xl' />
-                            <h1 className='font-bold'>{community.communityTitle}</h1>
+                            <Link
+                                to={`/detail-community/${community.id.toString()}`}
+                                className='hover:underline flex items-center gap-4'
+                            >
+                                <FaUserFriends className='text-xl' />
+                                <h1 className='font-bold'>{community.communityTitle}</h1>
+                            </Link>
                         </li>
+
                     ))}
 
                     {communities.length > 3 && (

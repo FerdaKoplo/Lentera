@@ -1,7 +1,8 @@
 import { Editor, useEditor } from '@tiptap/react'
 import React, { useState } from 'react'
 import { RxCross1 } from "react-icons/rx"
-import { FaPlus } from "react-icons/fa6"
+import { FaBold, FaItalic, FaPlus } from "react-icons/fa6"
+import { IoMdImage } from 'react-icons/io'
 
 interface ToolButtonProps {
     editor: Editor | null
@@ -43,10 +44,10 @@ const ToolButton: React.FC<ToolButtonProps> = ({ editor }) => {
             </button>
             {toolbar && (
                 <div className='flex items-center gap-8'>
-                    <button type='button' onClick={() => editor?.chain().focus().toggleBold().run()}>Bold</button>
-                    <button type='button' onClick={() => editor?.chain().focus().toggleItalic().run()}>Italic</button>
-                    <button type='button' onClick={() => handleImageUpload(editor)}>
-                        Upload Image
+                    <button type='button' className='font-bold flex  text-[#A8E6CF] py-2 px-2 rounded-full border-2 border-[#A8E6CF]' onClick={() => editor?.chain().focus().toggleBold().run()}><FaBold /></button>
+                    <button type='button' className='font-bold flex  text-[#A8E6CF] py-2 px-2 rounded-full border-2 border-[#A8E6CF]' onClick={() => editor?.chain().focus().toggleItalic().run()}><FaItalic /></button>
+                    <button type='button' className='font-bold flex  text-[#A8E6CF] py-2 px-2 rounded-full border-2 border-[#A8E6CF]' onClick={() => handleImageUpload(editor)}>
+                        <IoMdImage />
                     </button>
                 </div>
             )}

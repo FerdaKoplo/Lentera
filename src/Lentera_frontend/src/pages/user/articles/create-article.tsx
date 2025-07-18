@@ -41,7 +41,6 @@ const CreateArticle = () => {
 
     const handleCreateArticle = async (event: React.FormEvent) => {
         event.preventDefault()
-
         let authorId
         if (principalId && principalId.trim() !== "") {
             try {

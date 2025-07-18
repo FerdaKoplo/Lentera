@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaPlus, FaUserFriends } from "react-icons/fa";
 import SidebarProfile from '../../../components/profile/SidebarProfile';
 import ViewButton from '../../../components/community/buttons/view-button';
@@ -7,12 +7,14 @@ import { Link } from 'react-router-dom';
 import useCommunity from '../../../hooks/useCommunity';
 import useAuth from '../../../hooks/useAuth';
 import { Principal } from '@dfinity/principal';
+import CommunityModalAuthor from '../../../components/community/modal/community-modal-author';
 
 
 const ListAuthorCommunity = () => {
 
-  const { getAllCommunitiesAuthor, communities } = useCommunity()
+  const { getAllCommunitiesAuthor, communities, deleteCommunity } = useCommunity()
   const { principalId } = useAuth()
+  const [selectedCommunityId, setSelectedCommunityId] = useState<bigint | null>(null)
 
   useEffect(() => {
     if (principalId && principalId.trim() !== "") {
@@ -27,6 +29,14 @@ const ListAuthorCommunity = () => {
       console.warn("principalId is missing, skipping fetch.");
     }
   }, [principalId, getAllCommunitiesAuthor])
+
+
+  const handleDelete = async () => {
+    if (selectedCommunityId) {
+      await deleteCommunity(selectedCommunityId)
+      setSelectedCommunityId(null)
+    }
+  }
 
   return (
     <div className='px-10 py-10 flex flex-col gap-10 w-full'>
@@ -54,12 +64,18 @@ const ListAuthorCommunity = () => {
               </div>
 
               <div>
-                <HelperAuthorCommunityButton />
+                <HelperAuthorCommunityButton onClick={() => setSelectedCommunityId(cm.id)} />
               </div>
             </div>
           </div>
         ))}
       </div>
+      {selectedCommunityId != null && (
+        <CommunityModalAuthor
+          onClose={() => setSelectedCommunityId(null)}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   )
 }

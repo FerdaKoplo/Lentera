@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import useArticle from '../../../../hooks/useArticle'
 import { useParams } from 'react-router-dom'
+import NavApp from '../../../../components/public-nav/nav-app'
+import SidebarArticle from '../../../../components/article/sidebar/sidebar-article'
 
 const DetailArticle = () => {
 
@@ -18,7 +20,7 @@ const DetailArticle = () => {
   if (!article) return <p className="text-center mt-10">Article not found.</p>
 
   return (
-    <div className='px-10 py-10 max-w-4xl mx-auto'>
+    <div className='px-16 py-10 max-w-4xl mx-auto'>
       {article.articleImage && (
         <img
           src={article.articleImage}
@@ -34,6 +36,7 @@ const DetailArticle = () => {
         dangerouslySetInnerHTML={{ __html: article.articleContent }}
       ></div>
     </div>
+
   )
 }
 

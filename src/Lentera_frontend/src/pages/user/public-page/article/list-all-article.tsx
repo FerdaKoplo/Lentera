@@ -19,11 +19,7 @@ const ListAllArticle = () => {
 
   return (
     <div>
-      <NavApp />
       <div className='px-32'>
-        <div className=''>
-          <h1 className='text-3xl font-semibold mint-violet'>Articles</h1>
-        </div>
         {/*  Cards */}
         <div className='min-h-screen'>
           <div className='grid grid-cols-3 '>

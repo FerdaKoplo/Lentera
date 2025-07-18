@@ -16,6 +16,8 @@ import CreateCommunity from "./pages/user/community/create-community";
 import ListAllCommunity from "./pages/user/public-page/community/list-all-community";
 import CommunityLayout from "./layouts/CommunityLayout";
 import DetailCommunity from "./pages/user/public-page/community/detail-community";
+import ListCommunityPost from "./pages/user/public-page/community/list-community-post";
+import ArticleLayout from "./layouts/ArticleLayout";
 
 function AppRoutes() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -40,13 +42,6 @@ function AppRoutes() {
       />
 
       <Route
-        path="/articles"
-        element={
-          isAuthenticated ? <ListAllArticle /> : <Navigate to="/login" replace />
-        }
-      />
-
-      <Route
         path="/create-article"
         element={
           isAuthenticated ? <CreateArticle /> : <Navigate to="/login" replace />
@@ -59,13 +54,13 @@ function AppRoutes() {
           isAuthenticated ? <UpdateThumbnailArticle /> : <Navigate to="/login" replace />
         }
       />
-
+{/* 
       <Route
         path="/detail-article/:id"
         element={
           isAuthenticated ? <DetailArticle /> : <Navigate to="/login" replace />
         }
-      />
+      /> */}
 
       <Route
         path="/create-community"
@@ -81,12 +76,16 @@ function AppRoutes() {
         }
       />
 
-
-
       <Route path="/community" element={<CommunityLayout />}>
-        <Route index element={<ListAllCommunity />} />
-        {/* <Route path="discover" element={<ProfileAnalytics />} />
-        <Route path="your-community" element={< />} /> */}
+        <Route index element={<ListCommunityPost />} />
+        <Route path="homepage" element={<ListCommunityPost />} />
+        <Route path="discover" element={<ListAllCommunity />} />
+      </Route>
+
+      <Route path="/articles" element={<ArticleLayout />}>
+        <Route index element={<ListAllArticle />} />
+        <Route path="discover" element={<ListAllArticle />} />
+        <Route path=":id" element={<DetailArticle />} />
       </Route>
 
       <Route path="/profile" element={<ProfileLayout />}>
