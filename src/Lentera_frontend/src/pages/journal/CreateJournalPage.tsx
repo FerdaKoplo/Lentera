@@ -79,9 +79,13 @@ const CreateJournalPage = () => {
     }
   };
 
+  const handleSubmitAnalysis = async () => {};
+
   return (
-    <div className="p-4 max-w-2xl mx-auto flex flex-col gap-6">
-      <h2 className="text-2xl font-semibold">Create Your Journal</h2>
+    <div className="p-4 max-w-2xl mx-auto flex flex-col gap-6 pt-10 ">
+      <h2 className="text-center text-4xl font-bold font-montserrat text-[#61B398]">
+        Create Your Journal
+      </h2>
 
       <div className="text-gray-600">
         <p>
@@ -92,139 +96,153 @@ const CreateJournalPage = () => {
       </div>
 
       <textarea
-        className="w-full border p-2 rounded-md h-40"
+        className="w-full border border-[#61B398] p-2 rounded-xl h-40"
         placeholder="Write your note here..."
         value={note}
         onChange={(e) => setNote(e.target.value)}
       />
 
-      <div>
-        <h3 className="font-medium mb-2">Select Emotions</h3>
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex justify-center gap-4">
-            {emotions.slice(0, 7).map((emotion) => (
-              <div
-                key={emotion}
-                className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
-                  selectedEmotions.includes(emotion)
-                    ? "border-blue-500"
-                    : "border-gray-200"
-                }`}
-                onClick={() =>
-                  toggleSelect(emotion, selectedEmotions, setSelectedEmotions)
-                }
-              >
-                <img
-                  src={`/assets/emotions/${emotion}.svg`}
-                  alt={emotion}
-                  className="w-10 h-10 object-contain"
-                />
-              </div>
-            ))}
-          </div>
+      <div className="border border-[#61B398] p-2 rounded-xl">
+        <div className="px-8 py-6">
+          <h3 className="font-medium mb-2">Emotions</h3>
+          <p className="pb-6 text-[#717171]">what are your emotions today</p>
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex justify-center gap-4">
+              {emotions.slice(0, 7).map((emotion) => (
+                <div
+                  key={emotion}
+                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
+                    selectedEmotions.includes(emotion)
+                      ? "border-[#62C6A4]"
+                      : "border-gray-200"
+                  }`}
+                  onClick={() =>
+                    toggleSelect(emotion, selectedEmotions, setSelectedEmotions)
+                  }
+                >
+                  <img
+                    src={`/assets/emotions/${emotion}.svg`}
+                    alt={emotion}
+                    className="w-10 h-10 object-contain"
+                  />
+                </div>
+              ))}
+            </div>
 
-          <div className="flex justify-center gap-4">
-            {emotions.slice(7, 12).map((emotion) => (
-              <div
-                key={emotion}
-                className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
-                  selectedEmotions.includes(emotion)
-                    ? "border-blue-500"
-                    : "border-gray-200"
-                }`}
-                onClick={() =>
-                  toggleSelect(emotion, selectedEmotions, setSelectedEmotions)
-                }
-              >
-                <img
-                  src={`/assets/emotions/${emotion}.svg`}
-                  alt={emotion}
-                  className="w-10 h-10 object-contain"
-                />
-              </div>
-            ))}
-          </div>
+            <div className="flex justify-center gap-4">
+              {emotions.slice(7, 12).map((emotion) => (
+                <div
+                  key={emotion}
+                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
+                    selectedEmotions.includes(emotion)
+                      ? "border-[#62C6A4]"
+                      : "border-gray-200"
+                  }`}
+                  onClick={() =>
+                    toggleSelect(emotion, selectedEmotions, setSelectedEmotions)
+                  }
+                >
+                  <img
+                    src={`/assets/emotions/${emotion}.svg`}
+                    alt={emotion}
+                    className="w-10 h-10 object-contain"
+                  />
+                </div>
+              ))}
+            </div>
 
-          <div className="flex justify-center gap-4">
-            {emotions.slice(12).map((emotion) => (
-              <div
-                key={emotion}
-                className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
-                  selectedEmotions.includes(emotion)
-                    ? "border-blue-500"
-                    : "border-gray-200"
-                }`}
-                onClick={() =>
-                  toggleSelect(emotion, selectedEmotions, setSelectedEmotions)
-                }
-              >
-                <img
-                  src={`/assets/emotions/${emotion}.svg`}
-                  alt={emotion}
-                  className="w-10 h-10 object-contain"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h3 className="font-medium mb-2">Select Emotion Triggers</h3>
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex justify-center gap-4">
-            {triggers.slice(0, 6).map((trigger) => (
-              <div
-                key={trigger}
-                className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
-                  selectedTriggers.includes(trigger)
-                    ? "border-blue-500"
-                    : "border-gray-200"
-                }`}
-                onClick={() =>
-                  toggleSelect(trigger, selectedTriggers, setSelectedTriggers)
-                }
-              >
-                <img
-                  src={`/assets/triggers/${trigger}.svg`}
-                  alt={trigger}
-                  className="w-10 h-10 object-contain"
-                />
-              </div>
-            ))}
-          </div>
-
-          <div className="flex justify-center gap-4">
-            {triggers.slice(6, 11).map((trigger) => (
-              <div
-                key={trigger}
-                className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
-                  selectedTriggers.includes(trigger)
-                    ? "border-blue-500"
-                    : "border-gray-200"
-                }`}
-                onClick={() =>
-                  toggleSelect(trigger, selectedTriggers, setSelectedTriggers)
-                }
-              >
-                <img
-                  src={`/assets/triggers/${trigger}.svg`}
-                  alt={trigger}
-                  className="w-10 h-10 object-contain"
-                />
-              </div>
-            ))}
+            <div className="flex justify-center gap-4">
+              {emotions.slice(12).map((emotion) => (
+                <div
+                  key={emotion}
+                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
+                    selectedEmotions.includes(emotion)
+                      ? "border-[#62C6A4]"
+                      : "border-gray-200"
+                  }`}
+                  onClick={() =>
+                    toggleSelect(emotion, selectedEmotions, setSelectedEmotions)
+                  }
+                >
+                  <img
+                    src={`/assets/emotions/${emotion}.svg`}
+                    alt={emotion}
+                    className="w-10 h-10 object-contain"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      <button
-        className="mt-4 px-6 py-2 text-white bg-green-600 hover:bg-green-700 rounded-lg disabled:opacity-50"
-        disabled={!note}
-        onClick={handleSubmit}
-      >
-        Post
-      </button>
+      <div className="border border-[#61B398] p-2 rounded-xl">
+        <div className="px-8 py-6">
+          <h3 className="font-medium mb-2">Emotion Triggers</h3>
+          <p className="pb-6 text-[#717171]">What’s affecting you today?</p>
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex justify-center gap-4">
+              {triggers.slice(0, 6).map((trigger) => (
+                <div
+                  key={trigger}
+                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
+                    selectedTriggers.includes(trigger)
+                      ? "border-blue-500"
+                      : "border-gray-200"
+                  }`}
+                  onClick={() =>
+                    toggleSelect(trigger, selectedTriggers, setSelectedTriggers)
+                  }
+                >
+                  <img
+                    src={`/assets/triggers/${trigger}.svg`}
+                    alt={trigger}
+                    className="w-10 h-10 object-contain"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-center gap-4">
+              {triggers.slice(6, 11).map((trigger) => (
+                <div
+                  key={trigger}
+                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
+                    selectedTriggers.includes(trigger)
+                      ? "border-blue-500"
+                      : "border-gray-200"
+                  }`}
+                  onClick={() =>
+                    toggleSelect(trigger, selectedTriggers, setSelectedTriggers)
+                  }
+                >
+                  <img
+                    src={`/assets/triggers/${trigger}.svg`}
+                    alt={trigger}
+                    className="w-10 h-10 object-contain"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-between">
+        <button
+          className="button-design"
+          disabled={!note}
+          onClick={handleSubmit}
+        >
+          Post
+        </button>
+        <button
+          className="button-design"
+          disabled={!note}
+          onClick={handleSubmitAnalysis}
+        >
+          Analysis
+        </button>
+      </div>
     </div>
   );
 };

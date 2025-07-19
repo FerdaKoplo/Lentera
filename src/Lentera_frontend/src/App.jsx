@@ -40,15 +40,15 @@ function AppRoutes() {
       </Route>
       <Route
         path="/create-journal"
-        element={<CreateMoodPage />}
-        //   isAuthenticated ? <EditProfile /> : <Navigate to="/login" replace />
-        // }
+        element={
+          isAuthenticated ? <EditProfile /> : <Navigate to="/login" replace />
+        }
       />
       <Route
         path="/create-journal/details"
-        element={<CreateJournalPage />}
-        //   isAuthenticated ? <EditProfile /> : <Navigate to="/login" replace />
-        // }
+        element={
+          isAuthenticated ? <EditProfile /> : <Navigate to="/login" replace />
+        }
       />
     </Routes>
   );
