@@ -17,14 +17,19 @@ import UserService "services/UserService";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
 import Time "mo:base/Time";
+import ArticleComment "types/ArticleComment";
+import ArticleCommentService "services/ArticleCommentService";
 actor {
     stable var stableUser : [User.User] = [];
     var userMap : User.Users = HashMap.HashMap(0, Principal.equal, Principal.hash);
 
-    
     stable var stableArticles : [Article.Article] = [] : [Article.Article];
     let articlesMap = HashMap.HashMap<Nat, Article.Article>(0, Nat.equal, Hash.hash);
     var articleCounter : Nat = 0;
+
+    stable var stableArticleComments : [ArticleComment.ArticleComment] = [] : [ArticleComment.ArticleComment];
+    let articleCommentsMap = HashMap.HashMap<Nat, ArticleComment.ArticleComment>(0, Nat.equal, Hash.hash);
+    var articleCommentCounter : Nat = 0;
 
     stable var stableCommunites : [Community.Community] = [] : [Community.Community];
     let communityMap = HashMap.HashMap<Nat, Community.Community>(0, Nat.equal, Hash.hash);
@@ -185,6 +190,7 @@ actor {
   system func preupgrade() {
     stableUser := Iter.toArray(userMap.vals());
     stableArticles := Iter.toArray(articlesMap.vals());
+    stableArticleComments := Iter.toArray(articleCommentsMap.vals());
     stableCommunites := Iter.toArray(communityMap.vals());
     stableDiscussions := Iter.toArray(discussionMap.vals());
     stableDiscussionReplies := Iter.toArray(discussionReplyMap.vals());
@@ -197,6 +203,10 @@ actor {
 
     for (article in stableArticles.vals()) {
         articlesMap.put(article.id, article);
+    };
+
+    for (articleComments in stableArticleComments.vals()) {
+        articleCommentsMap.put(articleComments.id, articleComments);
     };
 
     for (community in stableCommunites.vals()) {
@@ -212,6 +222,7 @@ actor {
     };
 
     stableArticles := [];
+    stableArticleComments := [];
     stableCommunites := [];
     stableDiscussions := [];
     stableDiscussionReplies := [];
@@ -264,6 +275,34 @@ actor {
         return #ok(updated);
       };
     };
+  };
+
+  // get article comment
+  public shared(msg) func createArticleComment(newComment : ArticleComment.ArticleComment) : async Result.Result<ArticleComment.ArticleComment, Text> {
+      articleCommentCounter += 1;
+      let commentId = articleCommentCounter;
+
+      let commentWithId : ArticleComment.ArticleComment = {
+          id = commentId;
+          articleId = newComment.articleId;
+          commenterId = msg.caller;
+          commentText = newComment.commentText;
+          commentedAt = Time.now();
+      };
+
+      return ArticleCommentService.createComment(articleCommentsMap, commentWithId);
+  };
+
+  public shared(_) func updateArticleComment(commentId : Nat, newText : Text) : async Result.Result<ArticleComment.ArticleComment, Text> {
+      return ArticleCommentService.updateComment(articleCommentsMap, commentId, newText);
+  };
+
+  public shared(_) func deleteArticleComment(commentId : Nat) : async Result.Result<Text, Text> {
+      return ArticleCommentService.deleteComment(articleCommentsMap, commentId);
+  };
+
+  public query func getArticleComments(articleId : Nat) : async [ArticleComment.ArticleComment] {
+      return ArticleCommentService.getCommentedArticles(articleCommentsMap, articleId);
   };
 };
     
