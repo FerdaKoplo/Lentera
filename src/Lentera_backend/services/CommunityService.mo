@@ -107,4 +107,58 @@ module {
         };
     };
 
+
+    public func leaveCommunity( communities : Community.Communities, communityId : Nat, userId : Principal ) : Result.Result<Text, Text> {
+
+        switch (communities.get(communityId)) {
+            case (?comm) {
+                let updatedMembers = Array.filter<CommunityMember.CommunityMember>(
+                    comm.communityMember,
+                    func(m : CommunityMember.CommunityMember) : Bool {
+                        m.userId != userId
+                    }
+                );
+
+                if (updatedMembers.size() == comm.communityMember.size()) {
+                    return #err("User not found in this community.");
+                };
+
+                // Update community with new member list
+                let updatedCommunity : Community.Community = {
+                    id = comm.id;
+                    authorCommunityId = comm.authorCommunityId;
+                    communityTitle = comm.communityTitle;
+                    communityBanner = comm.communityBanner;
+                    communityMember = updatedMembers;
+                    createdAt = comm.createdAt;
+                };
+
+                communities.put(communityId, updatedCommunity);
+                #ok("User left the community successfully.");
+            };
+            case (null) {
+                #err("Community not found.");
+            };
+        };
+    };
+
+    public func getAllJoinedCommunities( communities: Community.Communities, userId: Principal ): [Community.Community] {
+     Iter.toArray(
+            Iter.filter<Community.Community>(
+                communities.vals(),
+                func(c: Community.Community): Bool {
+                    var found = false;
+                    let members = Iter.fromArray(c.communityMember);
+                    label searchLoop for (member in members) {
+                        if (member.userId == userId) {
+                            found := true;
+                            break searchLoop;
+                        };
+                    };
+                    found
+                }
+            )
+        )
+    }
+
 };

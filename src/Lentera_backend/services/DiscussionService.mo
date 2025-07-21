@@ -3,6 +3,7 @@ import Iter "mo:base/Iter";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Time "mo:base/Time";
+import Array "mo:base/Array";
 module {
     public func getAllDiscussion(discussions  : Discussion.Discussions) : [Discussion.Discussion] {
         Iter.toArray(discussions.vals());
@@ -22,6 +23,16 @@ module {
             )
         )
     };
+
+    public func getDiscussionsByCommunity( discussions : Discussion.Discussions, communityId : Nat ) : [Discussion.Discussion] {
+    let allDiscussions = Iter.toArray(discussions.vals()); 
+    Array.filter<Discussion.Discussion>(
+        allDiscussions,
+        func(d : Discussion.Discussion) : Bool {
+            d.communityId == communityId
+        }
+    )
+};
     
     public func createDiscussion(discussions : Discussion.Discussions, discussionId : Nat, communityId : Nat, newDiscussion : Discussion.Discussion) : Result.Result<Discussion.Discussion, Text> {
         if (discussions.get(discussionId) != null) {

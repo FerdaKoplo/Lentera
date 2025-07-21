@@ -21,17 +21,20 @@ import JournalService "services/JournalService";
 import Journal "types/Journal";
 import LLM "mo:llm";
 import MentalState "types/MentalState";
-
-
+import ArticleComment "types/ArticleComment";
+import ArticleCommentService "services/ArticleCommentService";
 actor {
 
     stable var stableUser : [User.User] = [];
     var userMap : User.Users = HashMap.HashMap(0, Principal.equal, Principal.hash);
-
     
     stable var stableArticles : [Article.Article] = [] : [Article.Article];
     let articlesMap = HashMap.HashMap<Nat, Article.Article>(0, Nat.equal, Hash.hash);
     var articleCounter : Nat = 0;
+
+    stable var stableArticleComments : [ArticleComment.ArticleComment] = [] : [ArticleComment.ArticleComment];
+    let articleCommentsMap = HashMap.HashMap<Nat, ArticleComment.ArticleComment>(0, Nat.equal, Hash.hash);
+    var articleCommentCounter : Nat = 0;
 
     stable var stableCommunites : [Community.Community] = [] : [Community.Community];
     let communityMap = HashMap.HashMap<Nat, Community.Community>(0, Nat.equal, Hash.hash);
@@ -60,7 +63,10 @@ actor {
     public shared(_) func updateArticle(articleId : Nat, updatedArticle : Article.Article) : async Result.Result<Article.Article, Text> {
         return ArticleService.updateArticle(articlesMap, articleId, updatedArticle);
     };
-    
+
+    public shared(_) func updateArticleThumbnail(articleId : Nat, newThumbnail : Text) : async Result.Result<Article.Article, Text> {
+        return ArticleService.updateArticleThumbnail(articlesMap, articleId, newThumbnail);
+    };
     public shared(_) func deleteArticle(articleId : Nat) : async Result.Result<Text, Text> {
         return ArticleService.deleteArticle(articlesMap, articleId);
     };
@@ -75,7 +81,6 @@ actor {
     public query func getArticleDetail(articleId : Nat) : async ?Article.Article {
         return ArticleService.getArticleDetail(articlesMap, articleId);
     };
-
 
     // implementation of community service function
     public shared(_) func createCommunity(newCommunity : Community.Community) : async Result.Result<Community.Community, Text> {
@@ -107,14 +112,7 @@ actor {
         return CommunityService.getCommunityDetail(communityMap, communityId);
     };
 
-    public shared(_) func joinCommunity(communityId : Nat, userId : Principal, username : Text, avatar : ?Text, hasProfile : Bool) : async Text {
-        let user : User.User = {
-            id = userId;
-            username = username;
-            avatar = avatar;
-            hasProfile = hasProfile;
-            createdAt = null;
-        };
+    public shared(_) func joinCommunity(communityId : Nat, userId : Principal) : async Text {
 
         let result = CommunityService.joinCommunity(communityMap, communityId, userId);
 
@@ -123,6 +121,21 @@ actor {
             case (#err(e)) "Error: " # e;
         };
     };
+
+    public shared(_) func leaveCommunity(communityId : Nat, userId : Principal) : async Text {
+       
+        let result = CommunityService.leaveCommunity(communityMap, communityId, userId);
+
+        switch (result) {
+            case (#ok(msg)) msg;
+            case (#err(e)) "Error: " # e;
+        };
+    };
+
+    public query func getAllJoinedCommunities(userId: Principal) : async [Community.Community] {
+      return CommunityService.getAllJoinedCommunities(communityMap, userId);
+    };
+
 
     // implementation of discussion service
     public shared(_) func createDiscussion(newDiscussion : Discussion.Discussion) : async Result.Result<Discussion.Discussion, Text> {
@@ -154,6 +167,11 @@ actor {
         return DiscussionService.getDetailDiscussion(discussionMap, discussionId);
     };
 
+    public query func getDiscussionsByCommunity(communityId: Nat): async [Discussion.Discussion] {
+      return DiscussionService.getDiscussionsByCommunity(discussionMap, communityId);
+    };
+
+
     // implementation of discussion reply service
     public shared(_) func createDiscussionReply(newDiscussionReply : DiscussionReply.DiscussionReply) : async Result.Result<DiscussionReply.DiscussionReply, Text> {
         discussionReplyCounter += 1;
@@ -176,14 +194,45 @@ actor {
         return DiscussionReplyService.getRepliesByDiscussionId(discussionReplyMap, discussionId)
     };
     
-     system func preupgrade() {
+  system func preupgrade() {
     stableUser := Iter.toArray(userMap.vals());
+    stableArticles := Iter.toArray(articlesMap.vals());
+    stableArticleComments := Iter.toArray(articleCommentsMap.vals());
+    stableCommunites := Iter.toArray(communityMap.vals());
+    stableDiscussions := Iter.toArray(discussionMap.vals());
+    stableDiscussionReplies := Iter.toArray(discussionReplyMap.vals());
   };
 
   system func postupgrade() {
     for (user in stableUser.vals()) {
       userMap.put(user.id, user);
     };
+
+    for (article in stableArticles.vals()) {
+        articlesMap.put(article.id, article);
+    };
+
+    for (articleComments in stableArticleComments.vals()) {
+        articleCommentsMap.put(articleComments.id, articleComments);
+    };
+
+    for (community in stableCommunites.vals()) {
+        communityMap.put(community.id, community);
+    };
+
+    for (discussion in stableDiscussions.vals()) {
+        discussionMap.put(discussion.id, discussion);
+    };
+
+    for (reply in stableDiscussionReplies.vals()) {
+        discussionReplyMap.put(reply.id, reply);
+    };
+
+    stableArticles := [];
+    stableArticleComments := [];
+    stableCommunites := [];
+    stableDiscussions := [];
+    stableDiscussionReplies := [];
     stableUser := [];
   };
 
@@ -196,16 +245,19 @@ actor {
       case (#err(e)) return #err(e);
     }
   };
+
   public shared query func getUserByPrincipal(p : Principal) : async Result.Result<User.User, Text> {
     switch (userMap.get(p)) {
       case (?user) return #ok(user);
       case null return #err("User not found");
     }
   };
+
   public shared(msg) func getCurrentUser() : async ?User.User {
     let caller = msg.caller;
     return UserService.getCurrentUser(Iter.toArray(userMap.vals()), caller);
   };
+
   public query func getUserByUsername(username : Text) : async ?User.User {
     return UserService.getUserByUsername(userMap, username);
   };
@@ -247,10 +299,38 @@ actor {
   public shared(msg) func getMyJournal() : async ?[Journal.Journal] {
     let caller = msg.caller;
     return journalService.getByUser(caller);
+  };  
+
+    public shared(_) func analyzeJournal(journal: Journal.Journal): async Text {
+        return await journalService.analyzeJournalLLM(journal);
+    };
+
+  // get article comment
+  public shared(msg) func createArticleComment(newComment : ArticleComment.ArticleComment) : async Result.Result<ArticleComment.ArticleComment, Text> {
+      articleCommentCounter += 1;
+      let commentId = articleCommentCounter;
+
+      let commentWithId : ArticleComment.ArticleComment = {
+          id = commentId;
+          articleId = newComment.articleId;
+          commenterId = msg.caller;
+          commentText = newComment.commentText;
+          commentedAt = Time.now();
+      };
+
+      return ArticleCommentService.createComment(articleCommentsMap, commentWithId);
   };
 
-  public shared(_) func analyzeJournal(journal: Journal.Journal): async MentalState.MentalState {
-      await journalService.analyzeJournalLLM(journal);
+  public shared(_) func updateArticleComment(commentId : Nat, newText : Text) : async Result.Result<ArticleComment.ArticleComment, Text> {
+      return ArticleCommentService.updateComment(articleCommentsMap, commentId, newText);
+  };
+
+  public shared(_) func deleteArticleComment(commentId : Nat) : async Result.Result<Text, Text> {
+      return ArticleCommentService.deleteComment(articleCommentsMap, commentId);
+  };
+
+  public query func getArticleComments(articleId : Nat) : async [ArticleComment.ArticleComment] {
+      return ArticleCommentService.getCommentedArticles(articleCommentsMap, articleId);
   };
 };
     
