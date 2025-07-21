@@ -16,9 +16,17 @@ import DiscussionReplyService "services/DiscussionReplyService";
 import UserService "services/UserService";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
+import Time "mo:base/Time";
+import JournalService "services/JournalService";
+import Journal "types/Journal";
+import LLM "mo:llm";
+import MentalState "types/MentalState";
+
+
 actor {
+
     stable var stableUser : [User.User] = [];
-  var userMap : User.Users = HashMap.HashMap(0, Principal.equal, Principal.hash);
+    var userMap : User.Users = HashMap.HashMap(0, Principal.equal, Principal.hash);
 
     
     stable var stableArticles : [Article.Article] = [] : [Article.Article];
@@ -36,6 +44,8 @@ actor {
     stable var stableDiscussionReplies : [DiscussionReply.DiscussionReply] = [] : [DiscussionReply.DiscussionReply];
     let discussionReplyMap = HashMap.HashMap<Nat, DiscussionReply.DiscussionReply>(0, Nat.equal, Hash.hash);
     var discussionReplyCounter : Nat = 0;
+
+    let journalService = JournalService.JournalService();
 
     // implementation of article service
     public shared(_) func addArticle(newArticle : Article.Article) : async Result.Result<Article.Article, Text> {
@@ -103,6 +113,7 @@ actor {
             username = username;
             avatar = avatar;
             hasProfile = hasProfile;
+            createdAt = null;
         };
 
         let result = CommunityService.joinCommunity(communityMap, communityId, userId);
@@ -176,7 +187,7 @@ actor {
     stableUser := [];
   };
 
-  // Fungsi user
+  // Fimplementasi dari fungsi user
   public shared(msg) func registerUser(username : Text) : async Result.Result<User.User, Text> {
     let caller = msg.caller;
     let result = UserService.registerUser(userMap, caller, username);
@@ -199,7 +210,7 @@ actor {
     return UserService.getUserByUsername(userMap, username);
   };
 
-  public shared(msg) func updateUserProfile(username: Text, avatarUrl: ?Text) : async Result.Result<User.User, Text> {
+  public shared(msg) func updateUserProfile(username: Text, avatar: ?Text) : async Result.Result<User.User, Text> {
     let caller = msg.caller;
     switch (userMap.get(caller)) {
       case null return #err("User not found");
@@ -207,7 +218,7 @@ actor {
         let updated: User.User = {
           id = user.id;
           username = username;
-          avatarUrl = avatarUrl;
+          avatar = avatar;
           hasProfile = true; 
           createdAt = user.createdAt;
         };
@@ -220,4 +231,26 @@ actor {
       };
     };
   };
+
+  // implementasi dari fungsi journal
+  public shared(msg) func createJournal(
+    note: Text,
+    mood: Text,
+    emotions: ?[Text],
+    emotionTrigger: ?[Text],
+    timestamp: Time.Time // tambahan baru
+  ) : async Result.Result<Journal.Journal, Text> {
+    let caller = msg.caller;
+    return journalService.createJournal(caller, note, mood, emotions, emotionTrigger, timestamp);
+  };
+
+  public shared(msg) func getMyJournal() : async ?[Journal.Journal] {
+    let caller = msg.caller;
+    return journalService.getByUser(caller);
+  };
+
+  public shared(_) func analyzeJournal(journal: Journal.Journal): async MentalState.MentalState {
+      await journalService.analyzeJournalLLM(journal);
+  };
+};
     

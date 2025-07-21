@@ -1,4 +1,3 @@
-
     import Principal "mo:base/Principal";
     import Text "mo:base/Text";
     import HashMap "mo:base/HashMap";
@@ -8,8 +7,8 @@
         public type User = {
             id : Principal;
             username : Text;
-            avatarUrl : ?Text;
+            avatar : ?Text;
             hasProfile : Bool;
-            createdAt : Time.Time;
+            createdAt : ?Time.Time;
         };
     };
