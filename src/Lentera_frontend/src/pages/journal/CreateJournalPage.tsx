@@ -68,7 +68,7 @@ const CreateJournalPage = () => {
       );
 
       if ("ok" in result) {
-        navigate("/");
+        navigate("/profile/journals");
       } else {
         console.error("Create journal failed:", result.err);
         alert("Failed to create journal: " + result.err);
@@ -79,7 +79,41 @@ const CreateJournalPage = () => {
     }
   };
 
-  const handleSubmitAnalysis = async () => {};
+  const handleSubmitAnalysis = async () => {
+    if (!mood || !timestamp || !note) return;
+
+    try {
+      // 1. Buat journal dulu
+      const result = await Lentera_backend.createJournal(
+        note,
+        mood,
+        [selectedEmotions],
+        [selectedTriggers],
+        BigInt(timestamp)
+      );
+
+      // 2. Cek jika berhasil
+      if ("ok" in result) {
+        const createdJournal = result.ok;
+
+        // 3. Panggil analisis LLM
+        const analysisResult = await Lentera_backend.analyzeJournal(
+          createdJournal
+        );
+
+        console.log("Hasil analisis:", analysisResult);
+
+        // 4. Arahkan ke halaman journal dengan hasil analisis atau tampilkan hasil di sini
+        navigate("/profile/journals");
+      } else {
+        console.error("Create journal failed:", result.err);
+        alert("Failed to create journal: " + result.err);
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      alert("An error occurred while creating or analyzing the journal.");
+    }
+  };
 
   return (
     <div className="p-4 max-w-2xl mx-auto flex flex-col gap-6 pt-10 ">

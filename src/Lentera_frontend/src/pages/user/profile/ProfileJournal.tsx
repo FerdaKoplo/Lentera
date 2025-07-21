@@ -15,7 +15,10 @@ const ProfileJournal = () => {
   if (error)
     return <div className="text-center mt-10 text-red-500">{error}</div>;
 
-  const grouped = groupJournalsByDate(myJournals);
+  const sortedJournals = [...myJournals].sort(
+    (a, b) => Number(b.timeCreated) - Number(a.timeCreated)
+  );
+  const grouped = groupJournalsByDate(sortedJournals);
 
   return (
     <div className="flex flex-col gap-8 items-center px-4">

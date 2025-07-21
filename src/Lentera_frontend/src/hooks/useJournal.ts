@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
 import { Lentera_backend } from "../../../declarations/Lentera_backend";
-import type { Journal } from "../../../declarations/Lentera_backend/Lentera_backend.did";
+import type {
+  Journal,
+  MentalState,
+} from "../../../declarations/Lentera_backend/Lentera_backend.did";
 
 const useJournal = () => {
   const [myJournals, setMyJournals] = useState<Journal[]>([]);
   const [allJournals, setAllJournals] = useState<Journal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mentalState, setMentalState] = useState<MentalState | null>(null);
+  const [loadingAnalysis, setLoadingAnalysis] = useState(false);
+  const [errorAnalysis, setErrorAnalysis] = useState<string | null>(null);
 
   // Fetch journal milik user
   const fetchMyJournals = async () => {
@@ -54,6 +60,23 @@ const useJournal = () => {
     }
   };
 
+  const analyze = async (journal: Journal) => {
+    try {
+      setLoadingAnalysis(true);
+      setErrorAnalysis(null);
+
+      const result = await Lentera_backend.analyzeJournal(journal);
+      setMentalState(result);
+      return result;
+    } catch (err) {
+      console.error("Failed to analyze journal:", err);
+      setErrorAnalysis("Failed to analyze journal");
+      return null;
+    } finally {
+      setLoadingAnalysis(false);
+    }
+  };
+
   return {
     myJournals,
     allJournals,
@@ -61,6 +84,10 @@ const useJournal = () => {
     error,
     fetchMyJournals,
     createJournal,
+    mentalState,
+    loadingAnalysis,
+    errorAnalysis,
+    analyze,
   };
 };
 

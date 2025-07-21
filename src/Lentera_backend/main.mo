@@ -19,6 +19,9 @@ import Array "mo:base/Array";
 import Time "mo:base/Time";
 import JournalService "services/JournalService";
 import Journal "types/Journal";
+import LLM "mo:llm";
+import MentalState "types/MentalState";
+
 
 actor {
 
@@ -244,6 +247,10 @@ actor {
   public shared(msg) func getMyJournal() : async ?[Journal.Journal] {
     let caller = msg.caller;
     return journalService.getByUser(caller);
-  }
+  };
+
+  public shared(_) func analyzeJournal(journal: Journal.Journal): async MentalState.MentalState {
+      await journalService.analyzeJournalLLM(journal);
+  };
 };
     
