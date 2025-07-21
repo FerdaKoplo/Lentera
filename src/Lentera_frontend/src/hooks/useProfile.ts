@@ -14,7 +14,6 @@ export const useProfile = () => {
         const result = await Lentera_backend.getCurrentUser();
         const user =
           Array.isArray(result) && result.length > 0 ? result[0] : null;
-
         if (user) {
           setProfile(user);
         } else {

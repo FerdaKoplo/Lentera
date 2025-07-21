@@ -17,12 +17,17 @@ import UserService "services/UserService";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
 import Time "mo:base/Time";
+import JournalService "services/JournalService";
+import Journal "types/Journal";
+import LLM "mo:llm";
+import MentalState "types/MentalState";
 import ArticleComment "types/ArticleComment";
 import ArticleCommentService "services/ArticleCommentService";
 actor {
+
     stable var stableUser : [User.User] = [];
     var userMap : User.Users = HashMap.HashMap(0, Principal.equal, Principal.hash);
-
+    
     stable var stableArticles : [Article.Article] = [] : [Article.Article];
     let articlesMap = HashMap.HashMap<Nat, Article.Article>(0, Nat.equal, Hash.hash);
     var articleCounter : Nat = 0;
@@ -42,6 +47,8 @@ actor {
     stable var stableDiscussionReplies : [DiscussionReply.DiscussionReply] = [] : [DiscussionReply.DiscussionReply];
     let discussionReplyMap = HashMap.HashMap<Nat, DiscussionReply.DiscussionReply>(0, Nat.equal, Hash.hash);
     var discussionReplyCounter : Nat = 0;
+
+    let journalService = JournalService.JournalService();
 
     // implementation of article service
     public shared(_) func addArticle(newArticle : Article.Article) : async Result.Result<Article.Article, Text> {
@@ -229,7 +236,7 @@ actor {
     stableUser := [];
   };
 
-  // Fungsi user
+  // Fimplementasi dari fungsi user
   public shared(msg) func registerUser(username : Text) : async Result.Result<User.User, Text> {
     let caller = msg.caller;
     let result = UserService.registerUser(userMap, caller, username);
@@ -276,6 +283,27 @@ actor {
       };
     };
   };
+
+  // implementasi dari fungsi journal
+  public shared(msg) func createJournal(
+    note: Text,
+    mood: Text,
+    emotions: ?[Text],
+    emotionTrigger: ?[Text],
+    timestamp: Time.Time // tambahan baru
+  ) : async Result.Result<Journal.Journal, Text> {
+    let caller = msg.caller;
+    return journalService.createJournal(caller, note, mood, emotions, emotionTrigger, timestamp);
+  };
+
+  public shared(msg) func getMyJournal() : async ?[Journal.Journal] {
+    let caller = msg.caller;
+    return journalService.getByUser(caller);
+  };  
+
+    public shared(_) func analyzeJournal(journal: Journal.Journal): async Text {
+        return await journalService.analyzeJournalLLM(journal);
+    };
 
   // get article comment
   public shared(msg) func createArticleComment(newComment : ArticleComment.ArticleComment) : async Result.Result<ArticleComment.ArticleComment, Text> {

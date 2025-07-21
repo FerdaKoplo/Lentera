@@ -25,9 +25,9 @@ const ProfilePage = () => {
         )
       : "Unknown";
 
-  if (!isAuthenticated) {
+  /*  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
-  }
+  } */
 
   return (
     <div className="  flex items-center justify-center w-full h-full bg-white relative overflow-hidden">
@@ -51,7 +51,7 @@ const ProfilePage = () => {
         <img
           src={profile?.avatar[0] ?? "/assets/profile-dummy.svg"}
           alt=""
-          className="h-40 w-40"
+          className="h-40 w-40 rounded-full"
         />
 
         <div className="flex items-center gap-2">
