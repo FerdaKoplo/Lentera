@@ -12,8 +12,6 @@ import Int "mo:base/Int";
 import Debug "mo:base/Debug";
 import Error "mo:base/Error";
 import LLM "mo:llm";
-import Chat "mo:llm/chat";
-import Json "mo:json";
 import MentalState "../types/MentalState";
 import JsonUtils "../utils/JsonUtils";
 
