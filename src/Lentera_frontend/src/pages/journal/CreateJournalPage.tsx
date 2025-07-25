@@ -104,7 +104,7 @@ const CreateJournalPage = () => {
         console.log("Hasil analisis:", analysisResult);
 
         // 4. Arahkan ke halaman journal dengan hasil analisis atau tampilkan hasil di sini
-        navigate("/profile/journals");
+        navigate("/profile/journals");    
       } else {
         console.error("Create journal failed:", result.err);
         alert("Failed to create journal: " + result.err);
