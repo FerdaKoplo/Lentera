@@ -2,7 +2,7 @@ import { EditorContent } from '@tiptap/react'
 import React, { useState } from 'react'
 import ToolButton from './misc-add-button'
 
-type EditorFieldProps = {
+interface EditorFieldProps {
     editorId: 'title' | 'content'
     editor: any
     activeEditor: string | null

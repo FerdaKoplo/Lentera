@@ -57,6 +57,22 @@ module {
         };
     };
 
+    public func updateArticleThumbnail(articlesMap : Article.Articles, articleId : Nat, newThumbnail : Text) : Result.Result<Article.Article, Text> {
+        switch (articlesMap.get(articleId)) {
+            case (null) {
+                return #err("Article not found");
+            };
+            case (?article) {
+                let updatedArticle = {
+                    article with
+                    articleImage = newThumbnail
+                };
+                articlesMap.put(articleId, updatedArticle);
+                return #ok(updatedArticle);
+            };
+        };
+    };
+
     public func deleteArticle(articles : Article.Articles, articleId : Nat) : Result.Result<Text, Text> {
         switch (articles.get(articleId)) {
             case (?_) {

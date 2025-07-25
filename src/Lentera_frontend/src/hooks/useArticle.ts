@@ -90,6 +90,24 @@ const useArticle = () => {
     }
   }
 
+  const updateArticleThumbnail = async (articleId : bigint, newThumbnail : string) => {
+    setLoading(true)
+    try {
+      const resultUpdateThumbnail = await Lentera_backend.updateArticleThumbnail(articleId, newThumbnail)
+      if ("ok" in resultUpdateThumbnail) {
+        setArticle(resultUpdateThumbnail.ok)
+      } else {
+        setError(resultUpdateThumbnail.err)
+      }
+      await getAllArticles()
+      return resultUpdateThumbnail
+    } catch (err) {
+      setError(String(err))
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const deleteArticle = async (articleId : bigint) => {
     setLoading(true)
     try {
@@ -115,6 +133,7 @@ const useArticle = () => {
     createArticle,
     updateArticle,
     deleteArticle,
+    updateArticleThumbnail,
     articles,
     article,
     loading,

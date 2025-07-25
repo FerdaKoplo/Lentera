@@ -2,19 +2,25 @@ import { useEffect, useState } from "react";
 import { Lentera_backend } from "../../../declarations/Lentera_backend";
 import type {
   Journal,
-  MentalState,
 } from "../../../declarations/Lentera_backend/Lentera_backend.did";
+
+type ParsedMentalState = {
+  journalId: string;
+  userId: string;
+  labelEmotion: string[];
+  confidence: [string, number][];
+};
+
 
 const useJournal = () => {
   const [myJournals, setMyJournals] = useState<Journal[]>([]);
   const [allJournals, setAllJournals] = useState<Journal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mentalState, setMentalState] = useState<MentalState | null>(null);
+  const [mentalState, setMentalState] = useState<ParsedMentalState | null>(null)
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
   const [errorAnalysis, setErrorAnalysis] = useState<string | null>(null);
 
-  // Fetch journal milik user
   const fetchMyJournals = async () => {
     try {
       setLoading(true);
@@ -60,22 +66,39 @@ const useJournal = () => {
     }
   };
 
-  const analyze = async (journal: Journal) => {
+  const analyze = async (journal : Journal) => {
     try {
       setLoadingAnalysis(true);
       setErrorAnalysis(null);
 
-      const result = await Lentera_backend.analyzeJournal(journal);
-      setMentalState(result);
-      return result;
+      const rawResult = await Lentera_backend.analyzeJournal(journal);
+
+      let parsedResult = null;
+      try {
+        parsedResult = JSON.parse(rawResult) 
+      } catch (err) {
+        console.error("Failed to parse LLM result:", rawResult);
+        setErrorAnalysis("LLM response invalid format.");
+        return null;
+      }
+
+      if (!parsedResult.labelEmotion || !parsedResult.confidence) {
+        console.error("Invalid LLM response structure:", parsedResult);
+        setErrorAnalysis("Incomplete data from LLM.");
+        return null;
+      }
+
+      setMentalState(parsedResult);
+      return parsedResult;
     } catch (err) {
       console.error("Failed to analyze journal:", err);
-      setErrorAnalysis("Failed to analyze journal");
+      setErrorAnalysis("Failed to analyze journal.");
       return null;
     } finally {
       setLoadingAnalysis(false);
     }
   };
+
 
   return {
     myJournals,

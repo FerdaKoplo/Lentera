@@ -3,7 +3,7 @@ import SidebarMenuItem from "./SidebarMenuItem";
 import LogoutButton from "../auth/LogoutButton";
 import { useAuth } from "../../context/auth-context";
 
-const menuItems = [
+const menuItems = [ 
   { label: "Profile", path: "/profile" },
   { label: "Journals", path: "/profile/journals" },
   { label: "Analytics", path: "/profile/analytics" },
