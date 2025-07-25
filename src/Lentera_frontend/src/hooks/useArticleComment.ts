@@ -67,7 +67,14 @@ const useArticleComment = () => {
 
 
     return {
-
+        articleComment,
+        articleComments,
+        loading,
+        error,
+        getCommentedArticles,
+        createArticleComment,
+        updateArticleComment,
+        deleteArticleComment
     }
 }
 

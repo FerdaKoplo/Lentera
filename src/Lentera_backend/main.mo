@@ -23,6 +23,8 @@ import LLM "mo:llm";
 import MentalState "types/MentalState";
 import ArticleComment "types/ArticleComment";
 import ArticleCommentService "services/ArticleCommentService";
+import StatusPost "types/StatusPost";
+import StatusPostService "services/StatusPostService";
 actor {
 
     stable var stableUser : [User.User] = [];
@@ -47,6 +49,10 @@ actor {
     stable var stableDiscussionReplies : [DiscussionReply.DiscussionReply] = [] : [DiscussionReply.DiscussionReply];
     let discussionReplyMap = HashMap.HashMap<Nat, DiscussionReply.DiscussionReply>(0, Nat.equal, Hash.hash);
     var discussionReplyCounter : Nat = 0;
+
+    stable var stableStatusPosts : [StatusPost.StatusPost] = [] : [StatusPost.StatusPost];
+    let statusPostMap = HashMap.HashMap<Nat, StatusPost.StatusPost>(0, Nat.equal, Hash.hash);
+    var statusPostCounter : Nat = 0;
 
     let journalService = JournalService.JournalService();
 
@@ -201,6 +207,7 @@ actor {
     stableCommunites := Iter.toArray(communityMap.vals());
     stableDiscussions := Iter.toArray(discussionMap.vals());
     stableDiscussionReplies := Iter.toArray(discussionReplyMap.vals());
+    stableStatusPosts := Iter.toArray(statusPostMap.vals());
   };
 
   system func postupgrade() {
@@ -228,12 +235,17 @@ actor {
         discussionReplyMap.put(reply.id, reply);
     };
 
+    for (status in stableStatusPosts.vals()) {
+        statusPostMap.put(status.id, status);
+    };
+
     stableArticles := [];
     stableArticleComments := [];
     stableCommunites := [];
     stableDiscussions := [];
     stableDiscussionReplies := [];
     stableUser := [];
+    stableStatusPosts := [];
   };
 
   // Fimplementasi dari fungsi user
@@ -306,19 +318,13 @@ actor {
     };
 
   // get article comment
-  public shared(msg) func createArticleComment(newComment : ArticleComment.ArticleComment) : async Result.Result<ArticleComment.ArticleComment, Text> {
+  public shared(_) func createArticleComment(newComment : ArticleComment.ArticleComment) : async Result.Result<ArticleComment.ArticleComment, Text> {
       articleCommentCounter += 1;
       let commentId = articleCommentCounter;
 
-      let commentWithId : ArticleComment.ArticleComment = {
-          id = commentId;
-          articleId = newComment.articleId;
-          commenterId = msg.caller;
-          commentText = newComment.commentText;
-          commentedAt = Time.now();
-      };
+      let commentWithId = { newComment with id = commentId };
 
-      return ArticleCommentService.createComment(articleCommentsMap, commentWithId);
+      return ArticleCommentService.createComment(articleCommentsMap, commentId, commentWithId );
   };
 
   public shared(_) func updateArticleComment(commentId : Nat, newText : Text) : async Result.Result<ArticleComment.ArticleComment, Text> {
@@ -331,6 +337,24 @@ actor {
 
   public query func getArticleComments(articleId : Nat) : async [ArticleComment.ArticleComment] {
       return ArticleCommentService.getCommentedArticles(articleCommentsMap, articleId);
+  };
+
+  // Status Post
+  public shared(_) func createStatusPost(newStatusPost : StatusPost.StatusPost) : async Result.Result<StatusPost.StatusPost, Text> {
+      statusPostCounter += 1;
+      let statusPostId = statusPostCounter;
+
+      let statusPostWithId = { newStatusPost with id = statusPostId };
+
+      return StatusPostService.createStatusPost(statusPostMap, statusPostId, statusPostWithId );
+  };
+
+  public query func getAllStatusPost() : async [StatusPost.StatusPost] {
+      return StatusPostService.getAllStatusPost(statusPostMap);
+  };
+
+  public shared(_) func deleteStatusPost(statusPostId : Nat) : async Result.Result<Text, Text> {
+      return StatusPostService.deleteStatusPost(statusPostMap, statusPostId);
   };
 };
     

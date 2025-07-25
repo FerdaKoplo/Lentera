@@ -20,9 +20,11 @@ const NavApp = () => {
             Articles
           </li>
         </Link>
-        <li className='text-3xl'>
-          <FaUserCircle />
-        </li>
+        <Link to={'/profile'}>
+          <li className='text-3xl'>
+            <FaUserCircle />
+          </li>
+        </Link>
       </ul>
     </nav>
   )
