@@ -20,7 +20,7 @@ const DiscussionReply: React.FC<DiscussionReplyProps> = ({ discussionId, current
         if (replyContent.trim() === '') return
 
         const newReply = {
-            id: BigInt(0),
+            id:  BigInt(Date.now() * 1000 + Math.floor(Math.random() * 1000)),
             discussionId,
             userId: Principal.fromText(currentPrincipal),
             discussionContentReply: replyContent,

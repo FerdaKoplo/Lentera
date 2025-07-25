@@ -16,20 +16,20 @@ module {
         )
     };
 
-    public func createComment(commentMap : ArticleComment.ArticleComments, newComment : ArticleComment.ArticleComment) : Result.Result<ArticleComment.ArticleComment, Text> {
-        if (commentMap.get(newComment.id) != null) {
+    public func createComment(commentMap : ArticleComment.ArticleComments, articleCommentId : Nat, newComment : ArticleComment.ArticleComment) : Result.Result<ArticleComment.ArticleComment, Text> {
+        if (commentMap.get(articleCommentId) != null) {
             return #err("Comment with this ID already exists.");
         };
 
         let createdComment : ArticleComment.ArticleComment = {
-            id = newComment.id;
+            id = articleCommentId;
             articleId = newComment.articleId;
             commenterId = newComment.commenterId;
             commentText = newComment.commentText;
             commentedAt = Time.now();
         };
 
-        commentMap.put(newComment.id, createdComment);
+        commentMap.put(articleCommentId, createdComment);
         #ok(createdComment);
     };
 

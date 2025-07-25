@@ -20,10 +20,14 @@ import CreateArticle from "./pages/user/articles/create-article";
 import ProfileJournal from "./pages/user/profile/ProfileJournal";
 import CreateMoodPage from "./pages/journal/CreateMoodPage";
 import CreateJournalPage from "./pages/journal/CreateJournalPage";
+import LanternFlameSpinner from "./components/spinner/lamp-spinner";
+import Homepage from "./pages/user/public-page/homepage/homepage";
 
 function AppRoutes() {
-  const { isAuthenticated, isLoading, user } = useAuth();
-  if (isLoading) return <p>Loading...</p>;
+  const { isAuthenticated, isLoading, user } = useAuth()
+  
+  if (isLoading) return <LanternFlameSpinner />
+
   return (
     <Routes>
       <Route
@@ -36,6 +40,14 @@ function AppRoutes() {
           )
         }
       />
+
+      <Route
+        path="/homepage"
+        element={
+          isAuthenticated ? <Homepage /> : <Navigate to="/login" replace />
+        }
+      />
+
       <Route
         path="/edit-profile"
         element={
@@ -90,6 +102,7 @@ function AppRoutes() {
         <Route path="articles" element={<ListArticleAuthor />} />
         <Route path="community" element={<ListAuthorCommunity />} />
       </Route>
+      
       <Route
         path="/create-journal"
         element={
