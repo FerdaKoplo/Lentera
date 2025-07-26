@@ -11,12 +11,10 @@ const PostDiscussionForm: React.FC<PostDiscussionFormProps> = ({ communityId }) 
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [submitting, setSubmitting] = useState(false)
-
   const { createDiscussion } = useDiscussion()
   const { principalId } = useAuth()
 
   const handleSubmit = async () => {
-
     let authorId
         if (principalId && principalId.trim() !== "") {
           try {
@@ -29,8 +27,8 @@ const PostDiscussionForm: React.FC<PostDiscussionFormProps> = ({ communityId }) 
           console.warn("No principalId detected, using fallback.")
           authorId = Principal.anonymous()
         }
+        
     if (!title.trim() || !content.trim()) return
-
     setSubmitting(true)
 
     const newDiscussion = {
@@ -52,6 +50,7 @@ const PostDiscussionForm: React.FC<PostDiscussionFormProps> = ({ communityId }) 
   return (
     <div className="rounded-lg p-4 mb-6 shadow-sm">
       <div className="mb-3 text-sm font-semibold text-gray-600">Start a new discussion in this community</div>
+      
       <input
         type="text"
         placeholder="Title..."
@@ -59,6 +58,7 @@ const PostDiscussionForm: React.FC<PostDiscussionFormProps> = ({ communityId }) 
         onChange={(e) => setTitle(e.target.value)}
         className="w-full mb-2 p-2 border border-gray-300 rounded"
       />
+
       <textarea
         placeholder="Share your thoughts..."
         value={content}
@@ -66,12 +66,15 @@ const PostDiscussionForm: React.FC<PostDiscussionFormProps> = ({ communityId }) 
         rows={3}
         className="w-full p-2 border border-gray-300 rounded resize-none"
       />
+
       <button
         onClick={handleSubmit}
         disabled={submitting}
         className="mt-3 bg-gradient-to-r from-[#BCA7E8] to-[#A8E6CF] rounded-full text-white font-semibold px-4 py-2 "
       >
+
         {submitting ? "Posting..." : "Post Discussion"}
+      
       </button>
     </div>
   )

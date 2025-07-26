@@ -80,9 +80,11 @@ const CreateCommunity = () => {
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
           <div className="space-y-2">
+            
             <label className="block text-sm font-montserrat font-medium text-[#32c093]">
               Community Title
             </label>
+
             <input
               type="text"
               placeholder="Enter community name"

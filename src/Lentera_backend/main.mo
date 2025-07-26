@@ -354,7 +354,7 @@ actor {
   };
 
   public shared(_) func deleteStatusPost(statusPostId : Nat) : async Result.Result<Text, Text> {
-      return StatusPostService.deleteStatusPost(statusPostMap, statusPostId);
+      return StatusPostService. deleteStatusPost(statusPostMap, statusPostId);
   };
 };
     
