@@ -47,7 +47,7 @@ const CreateArticle = () => {
                 authorId = Principal.fromText(principalId)
             } catch (error) {
                 console.error("Invalid principalId from backend or auth hook:", principalId)
-                authorId = Principal.fromText("aaaaa-aa")  
+                authorId = Principal.fromText("aaaaa-aa")
             }
         } else {
             console.warn("No principalId detected, using fallback.")
@@ -72,6 +72,7 @@ const CreateArticle = () => {
             <SidebarProfile />
             <div className='px-10 py-10 '>
                 <form onSubmit={handleCreateArticle} className='flex items-start flex-col gap-7'>
+                    
                     <div className='flex flex-col gap-6'>
                         <EditorField
                             editorId="title"
@@ -79,7 +80,6 @@ const CreateArticle = () => {
                             activeEditor={activeEditor}
                             setActiveEditor={setActiveEditor}
                         />
-
                         <EditorField
                             editorId="content"
                             editor={contentEditor}
@@ -91,8 +91,7 @@ const CreateArticle = () => {
                         Publish Article
                     </button>
                 </form>
-
-            </div >
+            </div>
         </div>
     )
 }

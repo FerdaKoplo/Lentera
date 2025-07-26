@@ -39,7 +39,7 @@ const DetailArticle = () => {
           className='w-full h-96 object-cover rounded mb-10'
         />
       )}
-      
+
       <h1 className='text-4xl font-bold mb-4'>{article.articleTitle}</h1>
 
       <div
@@ -80,7 +80,6 @@ const DetailArticle = () => {
         ))}
       </div>
     </div>
-
   )
 }
 

@@ -22,6 +22,7 @@ import CreateMoodPage from "./pages/journal/CreateMoodPage";
 import CreateJournalPage from "./pages/journal/CreateJournalPage";
 import LanternFlameSpinner from "./components/spinner/lamp-spinner";
 import Homepage from "./pages/user/public-page/homepage/homepage";
+import MainLanding from "./pages/landing/main-landing";
 
 function AppRoutes() {
   const { isAuthenticated, isLoading, user } = useAuth()
@@ -30,6 +31,11 @@ function AppRoutes() {
 
   return (
     <Routes>
+      <Route 
+        path="/"
+        element={<MainLanding />}     
+      />
+
       <Route
         path="/login"
         element={
@@ -40,7 +46,6 @@ function AppRoutes() {
           )
         }
       />
-
       <Route
         path="/homepage"
         element={

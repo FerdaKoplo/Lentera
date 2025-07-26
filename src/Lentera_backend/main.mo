@@ -361,8 +361,8 @@ actor {
   };
 
   public shared(_) func deleteStatusPost(statusPostId : Nat) : async Result.Result<Text, Text> {
-      return StatusPostService.deleteStatusPost(statusPostMap, statusPostId);
-
+      return StatusPostService. deleteStatusPost(statusPostMap, statusPostId);
+ };
   // Mental State Service
   public shared(msg) func saveMentalState(state: MentalStateService.MentalState): async Result.Result<Text, Text> {
      Debug.print("Saving from: " # Principal.toText(msg.caller));
@@ -379,7 +379,6 @@ actor {
      Debug.print("Fetching for: " # Principal.toText(msg.caller));
     let caller = msg.caller;
     return mentalService.getMentalStatesByUser(caller);
-
   };
 };
     
