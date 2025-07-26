@@ -18,6 +18,7 @@
   .editor-no-outline .ProseMirror {
     outline: none;
   }
+  
   .button-design {
     @apply flex items-center justify-center gap-3 
         px-4 py-2 
@@ -39,4 +40,44 @@
         min-w-[100px]
         shadow-lg;
   }
+}
+
+@keyframes flicker {
+  0%, 100% { 
+    height: 16px; 
+    opacity: 0.9;
+    filter: blur(0.5px);
+  }
+  25% { 
+    height: 20px; 
+    opacity: 1;
+    filter: blur(0.8px);
+  }
+  50% { 
+    height: 14px; 
+    opacity: 0.8;
+    filter: blur(0.3px);
+  }
+  75% { 
+    height: 18px; 
+    opacity: 0.95;
+    filter: blur(0.6px);
+  }
+}
+
+@keyframes flicker2 {
+  0%, 100% { 
+    transform: translateX(-50%) scaleY(1);
+  }
+  50% { 
+    transform: translateX(-50%) scaleY(1.3);
+  }
+}
+
+.animate-flicker {
+  animation: flicker 0.8s infinite;
+}
+
+.animate-flicker2 {
+  animation: flicker2 0.4s infinite;
 }

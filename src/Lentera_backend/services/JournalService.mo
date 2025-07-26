@@ -13,7 +13,6 @@ import Debug "mo:base/Debug";
 import Error "mo:base/Error";
 import LLM "mo:llm";
 import MentalState "../types/MentalState";
-
 import LabelResult "../types/LabelResult";
 
 module {
@@ -93,13 +92,8 @@ module {
             "  \"labelEmotion\": [\"depression\", \"anxiety\", \"hopelessness\"],\n" #
             "  \"confidence\": [[\"depression\", 0.85], [\"anxiety\", 0.78], [\"hopelessness\", 0.65]]\n" #
             "}";
-
         let result = await LLM.prompt(#Llama3_1_8B, prompt);
         return result;  
     }
-
   };
-
-   
-  
 };
