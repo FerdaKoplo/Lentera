@@ -8,5 +8,4 @@ module {
         labelEmotion: [Text];
         confidence: [(Text, Float)];
     };
-    
 };

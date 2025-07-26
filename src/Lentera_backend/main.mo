@@ -25,6 +25,9 @@ import ArticleComment "types/ArticleComment";
 import ArticleCommentService "services/ArticleCommentService";
 import StatusPost "types/StatusPost";
 import StatusPostService "services/StatusPostService";
+import MentalStateService "./services/MentalStateService";
+import Debug "mo:base/Debug";
+
 actor {
 
     stable var stableUser : [User.User] = [];
@@ -50,9 +53,13 @@ actor {
     let discussionReplyMap = HashMap.HashMap<Nat, DiscussionReply.DiscussionReply>(0, Nat.equal, Hash.hash);
     var discussionReplyCounter : Nat = 0;
 
+
     stable var stableStatusPosts : [StatusPost.StatusPost] = [] : [StatusPost.StatusPost];
     let statusPostMap = HashMap.HashMap<Nat, StatusPost.StatusPost>(0, Nat.equal, Hash.hash);
     var statusPostCounter : Nat = 0;
+
+    private let mentalService = MentalStateService.MentalStateService();
+
 
     let journalService = JournalService.JournalService();
 
@@ -355,6 +362,24 @@ actor {
 
   public shared(_) func deleteStatusPost(statusPostId : Nat) : async Result.Result<Text, Text> {
       return StatusPostService.deleteStatusPost(statusPostMap, statusPostId);
+
+  // Mental State Service
+  public shared(msg) func saveMentalState(state: MentalStateService.MentalState): async Result.Result<Text, Text> {
+     Debug.print("Saving from: " # Principal.toText(msg.caller));
+    let updatedState = {
+      journalId = state.journalId;
+      userId = msg.caller;
+      labelEmotion = state.labelEmotion;
+      confidence = state.confidence;
+    };
+    return await mentalService.saveMentalState(updatedState);
+  };
+
+  public shared(msg) func getMyMentalStates(): async [MentalStateService.MentalState] {
+     Debug.print("Fetching for: " # Principal.toText(msg.caller));
+    let caller = msg.caller;
+    return mentalService.getMentalStatesByUser(caller);
+
   };
 };
     

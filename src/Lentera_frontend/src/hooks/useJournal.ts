@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Lentera_backend } from "../../../declarations/Lentera_backend";
-import type {
-  Journal,
-} from "../../../declarations/Lentera_backend/Lentera_backend.did";
+import type { Journal } from "../../../declarations/Lentera_backend/Lentera_backend.did";
+import { AuthClient } from "@dfinity/auth-client";
+import { useAuth } from "../context/auth-context";
+import { Principal } from "@dfinity/principal";
 
 type ParsedMentalState = {
   journalId: string;
@@ -11,15 +12,17 @@ type ParsedMentalState = {
   confidence: [string, number][];
 };
 
-
 const useJournal = () => {
   const [myJournals, setMyJournals] = useState<Journal[]>([]);
   const [allJournals, setAllJournals] = useState<Journal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mentalState, setMentalState] = useState<ParsedMentalState | null>(null)
+  const [mentalState, setMentalState] = useState<ParsedMentalState | null>(
+    null
+  );
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
   const [errorAnalysis, setErrorAnalysis] = useState<string | null>(null);
+  const { principalId } = useAuth();
 
   const fetchMyJournals = async () => {
     try {
@@ -66,7 +69,7 @@ const useJournal = () => {
     }
   };
 
-  const analyze = async (journal : Journal) => {
+  const analyze = async (journal: Journal) => {
     try {
       setLoadingAnalysis(true);
       setErrorAnalysis(null);
@@ -75,7 +78,7 @@ const useJournal = () => {
 
       let parsedResult = null;
       try {
-        parsedResult = JSON.parse(rawResult) 
+        parsedResult = JSON.parse(rawResult);
       } catch (err) {
         console.error("Failed to parse LLM result:", rawResult);
         setErrorAnalysis("LLM response invalid format.");
@@ -89,6 +92,17 @@ const useJournal = () => {
       }
 
       setMentalState(parsedResult);
+      try {
+        await Lentera_backend.saveMentalState({
+          journalId: parsedResult.journalId,
+          userId: Principal.fromText(principalId),
+          labelEmotion: parsedResult.labelEmotion,
+          confidence: parsedResult.confidence,
+        });
+      } catch (err) {
+        console.error("Failed to save mental state to backend:", err);
+      }
+
       return parsedResult;
     } catch (err) {
       console.error("Failed to analyze journal:", err);
@@ -99,6 +113,14 @@ const useJournal = () => {
     }
   };
 
+  const fetchMyMentalStates = async () => {
+    try {
+      const result = await Lentera_backend.getMyMentalStates();
+      console.log("My mental states:", result);
+    } catch (err) {
+      console.error("Failed to fetch mental states", err);
+    }
+  };
 
   return {
     myJournals,
@@ -111,6 +133,7 @@ const useJournal = () => {
     loadingAnalysis,
     errorAnalysis,
     analyze,
+    fetchMyMentalStates,
   };
 };
 
