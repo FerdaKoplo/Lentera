@@ -43,7 +43,7 @@ const EditProfile: React.FC = () => {
       }
     } catch (err) {
       console.error(err);
-      setError("Unexpected error occurred");
+      setError("Unexpected error occurred image to big");
     } finally {
       setLoading(false);
     }

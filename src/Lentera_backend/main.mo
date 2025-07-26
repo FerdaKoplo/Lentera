@@ -23,6 +23,9 @@ import LLM "mo:llm";
 import MentalState "types/MentalState";
 import ArticleComment "types/ArticleComment";
 import ArticleCommentService "services/ArticleCommentService";
+import MentalStateService "./services/MentalStateService";
+import Debug "mo:base/Debug";
+
 actor {
 
     stable var stableUser : [User.User] = [];
@@ -47,6 +50,8 @@ actor {
     stable var stableDiscussionReplies : [DiscussionReply.DiscussionReply] = [] : [DiscussionReply.DiscussionReply];
     let discussionReplyMap = HashMap.HashMap<Nat, DiscussionReply.DiscussionReply>(0, Nat.equal, Hash.hash);
     var discussionReplyCounter : Nat = 0;
+
+    private let mentalService = MentalStateService.MentalStateService();
 
     let journalService = JournalService.JournalService();
 
@@ -331,6 +336,24 @@ actor {
 
   public query func getArticleComments(articleId : Nat) : async [ArticleComment.ArticleComment] {
       return ArticleCommentService.getCommentedArticles(articleCommentsMap, articleId);
+  };
+
+  // Mental State Service
+  public shared(msg) func saveMentalState(state: MentalStateService.MentalState): async Result.Result<Text, Text> {
+     Debug.print("Saving from: " # Principal.toText(msg.caller));
+    let updatedState = {
+      journalId = state.journalId;
+      userId = msg.caller;
+      labelEmotion = state.labelEmotion;
+      confidence = state.confidence;
+    };
+    return await mentalService.saveMentalState(updatedState);
+  };
+
+  public shared(msg) func getMyMentalStates(): async [MentalStateService.MentalState] {
+     Debug.print("Fetching for: " # Principal.toText(msg.caller));
+    let caller = msg.caller;
+    return mentalService.getMentalStatesByUser(caller);
   };
 };
     

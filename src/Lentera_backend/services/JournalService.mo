@@ -13,7 +13,6 @@ import Debug "mo:base/Debug";
 import Error "mo:base/Error";
 import LLM "mo:llm";
 import MentalState "../types/MentalState";
-import JsonUtils "../utils/JsonUtils";
 
 import LabelResult "../types/LabelResult";
 
@@ -98,7 +97,6 @@ module {
         let result = await LLM.prompt(#Llama3_1_8B, prompt);
         return result;  
     }
-
 
   };
 
