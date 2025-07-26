@@ -4,10 +4,12 @@ import JournalCard from "../../../components/profile/JournalCard";
 import { groupJournalsByDate } from "../../../utils/groupJournal";
 
 const ProfileJournal = () => {
-  const { myJournals, fetchMyJournals, loading, error } = useJournal();
+  const { myJournals, fetchMyJournals, loading, error, fetchMyMentalStates } =
+    useJournal();
 
   useEffect(() => {
     fetchMyJournals();
+    fetchMyMentalStates(); //tak buat debugging
   }, []);
 
   if (loading)
