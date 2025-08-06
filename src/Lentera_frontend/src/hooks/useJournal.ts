@@ -97,7 +97,9 @@ const useJournal = () => {
     } finally {
       setLoadingAnalysis(false);
     }
-  };
+  }
+
+  
 
 
   return {
