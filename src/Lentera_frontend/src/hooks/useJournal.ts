@@ -111,7 +111,9 @@ const useJournal = () => {
     } finally {
       setLoadingAnalysis(false);
     }
-  };
+  }
+
+  
 
   const fetchMyMentalStates = async () => {
     try {
