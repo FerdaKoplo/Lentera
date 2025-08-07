@@ -20,11 +20,13 @@ import Time "mo:base/Time";
 import JournalService "services/JournalService";
 import Journal "types/Journal";
 import LLM "mo:llm";
-import MentalState "types/MentalState";
 import ArticleComment "types/ArticleComment";
 import ArticleCommentService "services/ArticleCommentService";
 import StatusPost "types/StatusPost";
 import StatusPostService "services/StatusPostService";
+import MentalStateService "./services/MentalStateService";
+import Debug "mo:base/Debug";
+
 actor {
 
     stable var stableUser : [User.User] = [];
@@ -49,6 +51,7 @@ actor {
     stable var stableDiscussionReplies : [DiscussionReply.DiscussionReply] = [] : [DiscussionReply.DiscussionReply];
     let discussionReplyMap = HashMap.HashMap<Nat, DiscussionReply.DiscussionReply>(0, Nat.equal, Hash.hash);
     var discussionReplyCounter : Nat = 0;
+
 
     stable var stableStatusPosts : [StatusPost.StatusPost] = [] : [StatusPost.StatusPost];
     let statusPostMap = HashMap.HashMap<Nat, StatusPost.StatusPost>(0, Nat.equal, Hash.hash);
@@ -354,7 +357,8 @@ actor {
   };
 
   public shared(_) func deleteStatusPost(statusPostId : Nat) : async Result.Result<Text, Text> {
-      return StatusPostService. deleteStatusPost(statusPostMap, statusPostId);
+      return StatusPostService.deleteStatusPost(statusPostMap, statusPostId);
+
   };
 };
     
