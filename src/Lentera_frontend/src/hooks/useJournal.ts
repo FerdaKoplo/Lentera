@@ -75,8 +75,10 @@ const useJournal = () => {
       setErrorAnalysis(null);
 
       const rawResult = await Lentera_backend.analyzeJournal(journal);
+      console.log("Hasil mentah :", rawResult)
 
       let parsedResult = null;
+      
       try {
         parsedResult = JSON.parse(rawResult);
       } catch (err) {
@@ -85,20 +87,28 @@ const useJournal = () => {
         return null;
       }
 
-      if (!parsedResult.labelEmotion || !parsedResult.confidence) {
-        console.error("Invalid LLM response structure:", parsedResult);
-        setErrorAnalysis("Incomplete data from LLM.");
-        return null;
+      console.log("Parsed result from LLM:", parsedResult);
+
+      if (!parsedResult || !parsedResult.labelEmotion || !parsedResult.confidence) {
+          console.warn("LLM response tidak lengkap:", parsedResult);
       }
 
       setMentalState(parsedResult);
+
       try {
-        await Lentera_backend.saveMentalState({
+        console.log("Sending mental state:", {
           journalId: parsedResult.journalId,
-          userId: Principal.fromText(principalId),
           labelEmotion: parsedResult.labelEmotion,
           confidence: parsedResult.confidence,
         });
+
+        const result = await Lentera_backend.saveMentalState({
+          journalId: parsedResult.journalId,
+          labelEmotion: parsedResult.labelEmotion,
+          confidence: parsedResult.confidence,
+        });
+
+        console.log("Hasil Nyimpan : ", result);
       } catch (err) {
         console.error("Failed to save mental state to backend:", err);
       }
@@ -111,9 +121,8 @@ const useJournal = () => {
     } finally {
       setLoadingAnalysis(false);
     }
-  }
+  };
 
-  
 
   const fetchMyMentalStates = async () => {
     try {
