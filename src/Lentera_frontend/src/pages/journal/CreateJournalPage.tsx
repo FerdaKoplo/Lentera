@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { formatDate, formatTime } from "../../utils/formatTime";
 import { Lentera_backend } from "../../../../declarations/Lentera_backend";
+import { Principal } from "@dfinity/principal";
 
 const emotions = [
   "happy",
@@ -84,7 +85,7 @@ const CreateJournalPage = () => {
 
     try {
       // 1. Buat journal dulu
-      const result = await Lentera_backend.createJournal(
+      const createResult = await Lentera_backend.createJournal(
         note,
         mood,
         [selectedEmotions],
@@ -92,28 +93,32 @@ const CreateJournalPage = () => {
         BigInt(timestamp)
       );
 
-      // 2. Cek jika berhasil
-      if ("ok" in result) {
-        const createdJournal = result.ok;
-
-        // 3. Panggil analisis LLM
-        const analysisResult = await Lentera_backend.analyzeJournal(
-          createdJournal
-        );
-
-        console.log("Hasil analisis:", analysisResult);
-
-        // 4. Arahkan ke halaman journal dengan hasil analisis atau tampilkan hasil di sini
-        navigate("/profile/journals");    
-      } else {
-        console.error("Create journal failed:", result.err);
-        alert("Failed to create journal: " + result.err);
+      if (!("ok" in createResult)) {
+        alert("Failed to create journal: " + createResult.err);
+        return;
       }
+
+      const createdJournal = createResult.ok;
+
+      // 2. Analisis journal
+      const analysisRaw = await Lentera_backend.analyzeJournal(createdJournal);
+      const analysisResult = JSON.parse(analysisRaw);
+
+      // 3. Simpan mental state (panggil fungsi saveMentalState dari hook atau definisikan di sini)
+      await Lentera_backend.saveMentalState({
+        journalId: analysisResult.journalId,
+        userId: Principal.anonymous(),
+        labelEmotion: analysisResult.labelEmotion,
+        confidence: analysisResult.confidence,
+      });
+
+      navigate("/profile/journals");
     } catch (error) {
-      console.error("Unexpected error:", error);
-      alert("An error occurred while creating or analyzing the journal.");
+      alert("Error during creating or analyzing journal.");
+      console.error(error);
     }
   };
+
 
   return (
     <div className="p-4 max-w-2xl mx-auto flex flex-col gap-6 pt-10 ">
@@ -145,11 +150,10 @@ const CreateJournalPage = () => {
               {emotions.slice(0, 7).map((emotion) => (
                 <div
                   key={emotion}
-                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
-                    selectedEmotions.includes(emotion)
+                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${selectedEmotions.includes(emotion)
                       ? "border-[#62C6A4]"
                       : "border-gray-200"
-                  }`}
+                    }`}
                   onClick={() =>
                     toggleSelect(emotion, selectedEmotions, setSelectedEmotions)
                   }
@@ -167,11 +171,10 @@ const CreateJournalPage = () => {
               {emotions.slice(7, 12).map((emotion) => (
                 <div
                   key={emotion}
-                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
-                    selectedEmotions.includes(emotion)
+                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${selectedEmotions.includes(emotion)
                       ? "border-[#62C6A4]"
                       : "border-gray-200"
-                  }`}
+                    }`}
                   onClick={() =>
                     toggleSelect(emotion, selectedEmotions, setSelectedEmotions)
                   }
@@ -189,11 +192,10 @@ const CreateJournalPage = () => {
               {emotions.slice(12).map((emotion) => (
                 <div
                   key={emotion}
-                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
-                    selectedEmotions.includes(emotion)
+                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${selectedEmotions.includes(emotion)
                       ? "border-[#62C6A4]"
                       : "border-gray-200"
-                  }`}
+                    }`}
                   onClick={() =>
                     toggleSelect(emotion, selectedEmotions, setSelectedEmotions)
                   }
@@ -219,11 +221,10 @@ const CreateJournalPage = () => {
               {triggers.slice(0, 6).map((trigger) => (
                 <div
                   key={trigger}
-                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
-                    selectedTriggers.includes(trigger)
+                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${selectedTriggers.includes(trigger)
                       ? "border-blue-500"
                       : "border-gray-200"
-                  }`}
+                    }`}
                   onClick={() =>
                     toggleSelect(trigger, selectedTriggers, setSelectedTriggers)
                   }
@@ -241,11 +242,10 @@ const CreateJournalPage = () => {
               {triggers.slice(6, 11).map((trigger) => (
                 <div
                   key={trigger}
-                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${
-                    selectedTriggers.includes(trigger)
+                  className={`w-16 h-16 rounded-full border-4 flex items-center justify-center cursor-pointer ${selectedTriggers.includes(trigger)
                       ? "border-blue-500"
                       : "border-gray-200"
-                  }`}
+                    }`}
                   onClick={() =>
                     toggleSelect(trigger, selectedTriggers, setSelectedTriggers)
                   }

@@ -59,7 +59,6 @@ const useStatus = () => {
         }
     }
 
-
     return {
         statusPost,
         statusPosts,

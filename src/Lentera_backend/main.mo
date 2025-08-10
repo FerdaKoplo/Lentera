@@ -361,9 +361,10 @@ actor {
  };
   // Mental State Service
   public shared(msg) func saveMentalState(state: MentalStateService.MentalState): async Result.Result<Text, Text> {
-     Debug.print("Saving from: " # Principal.toText(msg.caller));
+    Debug.print("Saving from: " # Principal.toText(msg.caller));
     let updatedState = {
       journalId = state.journalId;
+      userId = msg.caller;
       labelEmotion = state.labelEmotion;
       confidence = state.confidence;
     };

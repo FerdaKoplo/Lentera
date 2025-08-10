@@ -4,7 +4,7 @@
     module {
         public type MentalState = {
             journalId: Text;
-            // userId: Principal;
+            userId: Principal;
             labelEmotion: [Text];
             confidence: [(Text, Float)];
         };  
