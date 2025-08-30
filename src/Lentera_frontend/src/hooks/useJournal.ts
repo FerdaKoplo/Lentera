@@ -17,12 +17,9 @@ const useJournal = () => {
   const [allJournals, setAllJournals] = useState<Journal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mentalState, setMentalState] = useState<ParsedMentalState | null>(
-    null
-  );
+  const [mentalStates, setMentalStates] = useState<ParsedMentalState[]>([]);
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
   const [errorAnalysis, setErrorAnalysis] = useState<string | null>(null);
-  const { principalId } = useAuth();
 
   const fetchMyJournals = async () => {
     try {
@@ -37,7 +34,6 @@ const useJournal = () => {
     }
   };
 
-  // Create journal
   const createJournal = async (
     note: string,
     mood: string,
@@ -75,48 +71,48 @@ const useJournal = () => {
       setErrorAnalysis(null);
 
       const rawResult = await Lentera_backend.analyzeJournal(journal);
+      const parsedResult = JSON.parse(rawResult);
 
-      let parsedResult = null;
-      try {
-        parsedResult = JSON.parse(rawResult);
-      } catch (err) {
-        console.error("Failed to parse LLM result:", rawResult);
-        setErrorAnalysis("LLM response invalid format.");
-        return null;
-      }
-
-      if (!parsedResult.labelEmotion || !parsedResult.confidence) {
-        console.error("Invalid LLM response structure:", parsedResult);
-        setErrorAnalysis("Incomplete data from LLM.");
-        return null;
-      }
-
-      setMentalState(parsedResult);
-      try {
-        await Lentera_backend.saveMentalState({
-          journalId: parsedResult.journalId,
-          userId: Principal.fromText(principalId),
-          labelEmotion: parsedResult.labelEmotion,
-          confidence: parsedResult.confidence,
-        });
-      } catch (err) {
-        console.error("Failed to save mental state to backend:", err);
-      }
+      setMentalStates(parsedResult);
 
       return parsedResult;
-    } catch (err) {
-      console.error("Failed to analyze journal:", err);
+    } catch (error) {
       setErrorAnalysis("Failed to analyze journal.");
+      console.error(error);
       return null;
     } finally {
       setLoadingAnalysis(false);
     }
   };
 
+
+  // const saveMentalState = async (mentalState: ParsedMentalState) => {
+  //   try {
+  //     const result = await Lentera_backend.saveMentalState({
+  //       journalId: mentalState.journalId,
+  //       labelEmotion: mentalState.labelEmotion,
+  //       confidence: mentalState.confidence,
+  //     });
+  //     return result;
+  //   } catch (error) {
+  //     console.error("Failed to save mental state:", error);
+  //     throw error;
+  //   }
+  // };
+
+
   const fetchMyMentalStates = async () => {
     try {
       const result = await Lentera_backend.getMyMentalStates();
       console.log("My mental states:", result);
+      const parsed: ParsedMentalState[] = result.map((state) => ({
+        journalId: state.journalId,
+        userId: state.userId.toText(),
+        labelEmotion: state.labelEmotion,
+        confidence: state.confidence,
+      }));
+
+      setMentalStates(parsed);
     } catch (err) {
       console.error("Failed to fetch mental states", err);
     }
@@ -129,11 +125,12 @@ const useJournal = () => {
     error,
     fetchMyJournals,
     createJournal,
-    mentalState,
+    mentalStates,
     loadingAnalysis,
     errorAnalysis,
     analyze,
     fetchMyMentalStates,
+    // saveMentalState
   };
 };
 

@@ -20,7 +20,6 @@ import Time "mo:base/Time";
 import JournalService "services/JournalService";
 import Journal "types/Journal";
 import LLM "mo:llm";
-import MentalState "types/MentalState";
 import ArticleComment "types/ArticleComment";
 import ArticleCommentService "services/ArticleCommentService";
 import StatusPost "types/StatusPost";
@@ -29,7 +28,6 @@ import MentalStateService "./services/MentalStateService";
 import Debug "mo:base/Debug";
 
 actor {
-
     stable var stableUser : [User.User] = [];
     var userMap : User.Users = HashMap.HashMap(0, Principal.equal, Principal.hash);
     
@@ -53,13 +51,11 @@ actor {
     let discussionReplyMap = HashMap.HashMap<Nat, DiscussionReply.DiscussionReply>(0, Nat.equal, Hash.hash);
     var discussionReplyCounter : Nat = 0;
 
-
     stable var stableStatusPosts : [StatusPost.StatusPost] = [] : [StatusPost.StatusPost];
     let statusPostMap = HashMap.HashMap<Nat, StatusPost.StatusPost>(0, Nat.equal, Hash.hash);
     var statusPostCounter : Nat = 0;
 
     private let mentalService = MentalStateService.MentalStateService();
-
 
     let journalService = JournalService.JournalService();
 
@@ -361,24 +357,25 @@ actor {
   };
 
   public shared(_) func deleteStatusPost(statusPostId : Nat) : async Result.Result<Text, Text> {
-      return StatusPostService. deleteStatusPost(statusPostMap, statusPostId);
+      return StatusPostService.deleteStatusPost(statusPostMap, statusPostId);
  };
   // Mental State Service
   public shared(msg) func saveMentalState(state: MentalStateService.MentalState): async Result.Result<Text, Text> {
-     Debug.print("Saving from: " # Principal.toText(msg.caller));
+    Debug.print("Saving from: " # Principal.toText(msg.caller));
     let updatedState = {
       journalId = state.journalId;
       userId = msg.caller;
       labelEmotion = state.labelEmotion;
       confidence = state.confidence;
     };
-    return await mentalService.saveMentalState(updatedState);
+    return await mentalService.saveMentalState(msg.caller, updatedState);
   };
 
   public shared(msg) func getMyMentalStates(): async [MentalStateService.MentalState] {
      Debug.print("Fetching for: " # Principal.toText(msg.caller));
     let caller = msg.caller;
     return mentalService.getMentalStatesByUser(caller);
+
   };
 };
     

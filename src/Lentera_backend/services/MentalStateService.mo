@@ -12,18 +12,19 @@ module {
   public class MentalStateService() {
     private var mentalStates : HashMap.HashMap<Principal, [MentalState]> = HashMap.HashMap(0, Principal.equal, Principal.hash);
 
-    public func saveMentalState(state: MentalState): async Result.Result<Text, Text> {
-      switch (mentalStates.get(state.userId)) {
+    public func saveMentalState(userId: Principal, state: MentalState): async Result.Result<Text, Text> {
+      switch (mentalStates.get(userId)) {
         case (?states) {
           let updated = Array.append<MentalState>(states, [state]);
-          mentalStates.put(state.userId, updated);
+          mentalStates.put(userId, updated);
         };
         case null {
-          mentalStates.put(state.userId, [state]);
+          mentalStates.put(userId, [state]);
         };
       };
       return #ok("Mental state saved");
     };
+
 
     public func getMentalStatesByUser(userId: Principal): [MentalState] {
       switch (mentalStates.get(userId)) {

@@ -5,7 +5,7 @@ export default {
     extend: {
       colors: {
         brand : {
-          light : '#FAFFFD'
+          light : '#F4FAF8'
         }
       },
       fontFamily: {
